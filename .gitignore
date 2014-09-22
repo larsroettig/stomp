@@ -1,0 +1,7 @@
+/.settings
+/.project
+/.buildpath
+/.idea
+/target
+/composer.lock
+/vendor
