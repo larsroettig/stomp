@@ -1,13 +1,7 @@
 {
-<<<<<<< HEAD
     "name": "techdivision/stompprotocol",
     "description": "Stomp protocol implementation (WIP)",
     "homepage": "https://github.com/techdivision/TechDivision_StompProtocol",
-=======
-    "name": "larsroettig/stompprotocol",
-    "description": "Stomp protocol implementation (WIP)",
-    "homepage": "https://github.com/larsroettig/TechDivision_StompProtocol",
->>>>>>> FETCH_HEAD
     "keywords": [
         "php",
         "stomp",
