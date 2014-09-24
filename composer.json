@@ -1,7 +1,7 @@
 {
-    "name": "techdivision/stomp",
+    "name": "larsroettig/stompprotocol",
     "description": "Stomp protocol implementation",
-    "homepage": "https://github.com/techdivision/TechDivision_Stomp",
+    "homepage": "https://github.com/larsroettig/TechDivision_StompProtocol",
     "keywords": [
         "php",
         "stomp",
