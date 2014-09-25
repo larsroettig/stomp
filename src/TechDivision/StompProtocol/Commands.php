@@ -1,6 +1,6 @@
 <?php
 /**
- * \TechDivision\StompProtocol\Command
+ * \TechDivision\StompProtocol\Commands
  *
  * NOTICE OF LICENSE
  *
@@ -21,7 +21,7 @@
 namespace TechDivision\StompProtocol;
 
 /**
- * Command implementations
+ * Holds the available stomp frame commands.
  *
  * @category  Library
  * @package   TechDivision_StompProtocol
@@ -29,8 +29,10 @@ namespace TechDivision\StompProtocol;
  * @copyright 2014 TechDivision GmbH <info@techdivision.com>
  * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      https://github.com/techdivision/TechDivision_StompProtocol
+ *
+ * @todo      add const documentation
  */
-class Command
+class Commands
 {
     /**
      *
@@ -115,33 +117,4 @@ class Command
      * @var string
      */
     const UNSUBSCRIBE = "UNSUBSCRIBE";
-
-    /**
-     * Holds the command
-     *
-     * @var string
-     */
-    protected $command;
-
-    /**
-     * Init the comand with value
-     *
-     * @param string $command The StompProtocol command.
-     *
-     * @return void
-     */
-    public function __construct($command)
-    {
-        $this->command = $command;
-    }
-
-    /**
-     * Returns the command string
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->command;
-    }
 }

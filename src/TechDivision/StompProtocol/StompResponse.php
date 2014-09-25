@@ -1,6 +1,6 @@
 <?php
 /**
- * \TechDivision\StompProtocol\StompFrameInterface
+ * \TechDivision\StompProtocol\StompResponse
  *
  * NOTICE OF LICENSE
  *
@@ -22,7 +22,7 @@
 namespace TechDivision\StompProtocol;
 
 /**
- * Interface for StompProtocol message.
+ * Implementation for a Stomp Request.
  *
  * @category  Library
  * @package   TechDivision_StompProtocol
@@ -32,37 +32,6 @@ namespace TechDivision\StompProtocol;
  * @link      https://github.com/techdivision/TechDivision_StompProtocol
  * @link      https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
-interface StompFrameInterface
+class StompResponse
 {
-    /**
-     * Init new StompProtocol message.
-     *
-     * @param \TechDivision\StompProtocol\Command $command The message command.
-     * @param array                               $headers The message headers.
-     * @param string                              $body    The message body.
-     *
-     * @return void
-     */
-    public function __construct(Command $command, array $headers, $body);
-
-    /**
-     * Returns the message headers.
-     *
-     * @return array
-     */
-    public function getHeaders();
-
-    /**
-     * Returns the message body.
-     *
-     * @return string
-     */
-    public function getBody();
-
-    /**
-     * Returns the message command.
-     *
-     * @return \TechDivision\StompProtocol\Command
-     */
-    public function getCommand();
 }

@@ -62,6 +62,13 @@ class StompConnectionHandler implements ConnectionHandlerInterface
     protected $connection;
 
     /**
+     * Hold's an array of modules to use for connection handler
+     *
+     * @var array
+     */
+    protected $modules;
+
+    /**
      * The worker instance
      *
      * @var \TechDivision\Server\Interfaces\WorkerInterface
@@ -86,6 +93,27 @@ class StompConnectionHandler implements ConnectionHandlerInterface
         register_shutdown_function(array(&$this, "shutdown"));
     }
 
+    /**
+     * Injects all needed modules for connection handler to process
+     *
+     * @param array $modules An array of Modules
+     *
+     * @return void
+     */
+    public function injectModules($modules)
+    {
+        $this->modules = $modules;
+    }
+
+    /**
+     * Returns all needed modules as array for connection handler to process
+     *
+     * @return array An array of Modules
+     */
+    public function getModules()
+    {
+        return $this->modules;
+    }
 
     /**
      * Injects the request context
@@ -98,7 +126,6 @@ class StompConnectionHandler implements ConnectionHandlerInterface
     {
         $this->requestContext = $requestContext;
     }
-
 
     /**
      * Return's the request's context instance
@@ -152,11 +179,27 @@ class StompConnectionHandler implements ConnectionHandlerInterface
         $keepAliveTimeout = (int)$serverConfig->getKeepAliveTimeout();
         $keepAliveConnection = true;
 
+        // push the line into stomp request
+        $stompRequest = new StompRequest();
 
         do {
             // receive a line from the connection
             $line = $connection->readLine(1024, $keepAliveTimeout);
 
+            // add the stomp request a request line
+            $stompRequest->push($line);
+
+
+            if ($stompRequest->isComplete() === true) {
+
+                /** @var \TechDivision\StompProtocol\StompFrame $stompFrame */
+                $stompFrame = $stompRequest->getStompParsedFrame();
+
+                switch ($stompFrame->getCommand()) {
+                    case Commands::CONNECT:
+                        //@todo implement this case
+                }
+            }
         } while ($keepAliveConnection === true);
 
         // finally close connection

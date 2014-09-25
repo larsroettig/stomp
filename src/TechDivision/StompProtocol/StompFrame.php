@@ -32,41 +32,61 @@ namespace TechDivision\StompProtocol;
  * @link      https://github.com/techdivision/TechDivision_StompProtocol
  * @link      https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
-class StompFrame implements StompFrameInterface
+class StompFrame
 {
+    /**
+     *
+     * @var string
+     */
+    const COLON = ':';
+
+    /**
+     *
+     */
+    const ESCAPE = '\\';
+
+    /**
+     *
+     */
+    const NEWLINE = "\n";
+
+    /**
+     *
+     */
+    const NULL = "\x00";
+
     /**
      * Holds the message command.
      *
-     * @var \TechDivision\StompProtocol\Command
+     * @var string
      */
     protected $command;
 
     /**
      * Holds the message headers.
      *
-     * @var
+     * @var array
      */
     protected $headers;
 
     /**
      * Holds the message body.
      *
-     * @var
+     * @var string
      */
     protected $body;
 
     /**
-     * Init new StompProtocol message.
+     * Create new stomp protocol frame.
      *
-     * @param \TechDivision\StompProtocol\Command $command The message command.
-     * @param array                               $headers The message headers.
-     * @param string                              $body    The message body.
+     * @param string $command The message command.
+     * @param array  $headers The message headers.
+     * @param string $body    The message body.
      *
      * @return void
      */
-    public function __construct(Command $command, array $headers, $body)
+    public function __construct($command = null, array $headers = array(), $body = "")
     {
-
         $this->command = $command;
         $this->headers = $headers;
         $this->body = $body;
@@ -83,6 +103,30 @@ class StompFrame implements StompFrameInterface
     }
 
     /**
+     * Set the headers.
+     *
+     * @param array $headers The headers to set.
+     *
+     * @return void
+     */
+    public function setHeaders(array $headers)
+    {
+        $this->headers = $headers;
+    }
+
+    /**
+     * Returns the value for the given header key.
+     *
+     * @param string $key The header to find the value
+     *
+     * @return string|null
+     */
+    public function getHeaderByKey($key)
+    {
+        return isset($this->headers[$key]) ? $this->headers[$key] : null;
+    }
+
+    /**
      * Returns the message body.
      *
      * @return string
@@ -93,12 +137,86 @@ class StompFrame implements StompFrameInterface
     }
 
     /**
+     * Set the body for the frame.
+     *
+     * @param string $body The body to set.
+     *
+     * @return void
+     */
+    public function setBody($body)
+    {
+        $this->body = $body;
+    }
+
+    /**
      * Returns the message command.
      *
-     * @return \TechDivision\StompProtocol\Command
+     * @return string
      */
     public function getCommand()
     {
         return $this->getCommand();
+    }
+
+    /**
+     * Set the command for the frame.
+     *
+     * @param string $command The Command to set.
+     *
+     * @return void
+     */
+    public function setCommand($command)
+    {
+        $this->command = $command;
+    }
+
+    /**
+     * Returns the frame object as string.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->command .
+        StompFrame::NEWLINE .
+        $this->headersToString() .
+        StompFrame::NEWLINE .
+        $this->body .
+        StompFrame::NULL;
+    }
+
+    /**
+     * Convert teh frame headers to string.
+     *
+     * @return string
+     */
+    protected function headersToString()
+    {
+        $headerString = "";
+
+        foreach ($this->headers as $key => $value) {
+            $name = $this->encodeHeaderString($key);
+            $value = $this->encodeHeaderString($value);
+
+            $headerString .= $name . StompFrame::COLON . $value . StompFrame::NEWLINE;
+        }
+
+        return $headerString;
+    }
+
+    /**
+     * Endcode the header string as stomp header string.
+     *
+     * @param string $value The value to convert
+     *
+     * @return string
+     */
+    protected function encodeHeaderString($value)
+    {
+        return strtr($value, array(
+            StompFrame::NEWLINE => '\n',
+            StompFrame::COLON => '\c',
+            StompFrame::ESCAPE => '\\\\',
+        ));
     }
 }
