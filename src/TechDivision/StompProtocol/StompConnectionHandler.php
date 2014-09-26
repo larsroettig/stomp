@@ -189,8 +189,7 @@ class StompConnectionHandler implements ConnectionHandlerInterface
             // add the stomp request a request line
             $stompRequest->push($line);
 
-
-            if ($stompRequest->isComplete() === true) {
+            if ($stompRequest->isComplete() == true) {
 
                 /** @var \TechDivision\StompProtocol\StompFrame $stompFrame */
                 $stompFrame = $stompRequest->getStompParsedFrame();
@@ -198,6 +197,7 @@ class StompConnectionHandler implements ConnectionHandlerInterface
                 switch ($stompFrame->getCommand()) {
                     case Commands::CONNECT:
                         //@todo implement this case
+                        break;
                 }
             }
         } while ($keepAliveConnection === true);

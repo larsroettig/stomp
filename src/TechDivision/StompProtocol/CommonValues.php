@@ -38,5 +38,17 @@ class CommonValues
      *
      * @var string
      */
+    const V1_0 = "1.0";
+
+    /**
+     *
+     * @var string
+     */
     const V1_1 = "1.1";
+
+    /**
+     *
+     * @var string
+     */
+    const TEXT_PLAIN ="text/plain";
 }

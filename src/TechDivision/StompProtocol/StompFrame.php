@@ -99,7 +99,7 @@ class StompFrame
      */
     public function getHeaders()
     {
-        return $this->getHeaders();
+        return $this->headers;
     }
 
     /**
@@ -133,7 +133,7 @@ class StompFrame
      */
     public function getBody()
     {
-        return $this->getBody();
+        return $this->body;
     }
 
     /**
@@ -155,7 +155,7 @@ class StompFrame
      */
     public function getCommand()
     {
-        return $this->getCommand();
+        return $this->command;
     }
 
     /**
@@ -205,7 +205,7 @@ class StompFrame
     }
 
     /**
-     * Endcode the header string as stomp header string.
+     * Encode the header string as stomp header string.
      *
      * @param string $value The value to convert
      *
@@ -213,6 +213,15 @@ class StompFrame
      */
     protected function encodeHeaderString($value)
     {
+        /*
+         * CONNECTED frames do not escape the colon or newline octets
+         * in order to remain backward compatible with STOMP 1.0.
+         */
+        if ($this->getCommand() === Commands::CONNECTED) {
+            return $value;
+        }
+
+        // escape "\n , : , \\" in value
         return strtr($value, array(
             StompFrame::NEWLINE => '\n',
             StompFrame::COLON => '\c',

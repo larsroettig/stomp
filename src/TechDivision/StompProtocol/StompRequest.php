@@ -66,6 +66,7 @@ class StompRequest
     public function push($line)
     {
         $this->buffer .= $line;
+
         if (strpos($this->buffer, StompFrame::NULL) !== false) {
             $this->setComplete(true);
         }
@@ -88,7 +89,7 @@ class StompRequest
         $stompFrame = $this->parseStompHeaders($headers, $stompFrame);
 
         // add the stomp body
-        $stompFrame->setBody($body);
+        $stompFrame->setBody(trim($body, StompFrame::NULL));
 
         // returns the stomp frame
         return $stompFrame;
@@ -132,6 +133,11 @@ class StompRequest
 
             // set the key value pair
             $headers[$key] = $value;
+        }
+
+        // set the standard frame protocol to 1.0
+        if (!array_key_exists(Headers::ACCEPT_VERSION, $headers)) {
+            $headers[Headers::ACCEPT_VERSION] = CommonValues::V1_0;
         }
 
         // add the parsed headers
