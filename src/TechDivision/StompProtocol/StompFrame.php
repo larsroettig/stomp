@@ -21,6 +21,10 @@
 
 namespace TechDivision\StompProtocol;
 
+use TechDivision\StompProtocol\Utils\CommonValues;
+use TechDivision\StompProtocol\Utils\Headers;
+use TechDivision\StompProtocol\Utils\ServerCommands;
+
 /**
  * Implementation for a Stomp frame.
  *
@@ -87,9 +91,9 @@ class StompFrame
      */
     public function __construct($command = null, array $headers = array(), $body = "")
     {
-        $this->command = $command;
-        $this->headers = $headers;
-        $this->body = $body;
+        $this->setCommand($command);
+        $this->setHeaders($headers);
+        $this->setBody($body);
     }
 
     /**
@@ -111,7 +115,13 @@ class StompFrame
      */
     public function setHeaders(array $headers)
     {
-        $this->headers = $headers;
+        if (is_array($this->headers)) {
+            foreach ($headers as $key => $value) {
+                $this->setHeaderValueByKey($key, $value);
+            }
+        } else {
+            $this->headers = $headers;
+        }
     }
 
     /**
@@ -121,9 +131,27 @@ class StompFrame
      *
      * @return string|null
      */
-    public function getHeaderByKey($key)
+    public function getHeaderValueByKey($key)
     {
         return isset($this->headers[$key]) ? $this->headers[$key] : null;
+    }
+
+    /**
+     * Set the value for the given header key.
+     *
+     * @param string $key   The header to find the value
+     * @param string $value The value to set
+     *
+     * @return void
+     */
+    public function setHeaderValueByKey($key, $value)
+    {
+        // ignore already set header element
+        if (isset($this->headers[$key])) {
+            return;
+        }
+
+        $this->headers[$key] = $value;
     }
 
     /**
@@ -146,28 +174,11 @@ class StompFrame
     public function setBody($body)
     {
         $this->body = $body;
-    }
 
-    /**
-     * Returns the message command.
-     *
-     * @return string
-     */
-    public function getCommand()
-    {
-        return $this->command;
-    }
-
-    /**
-     * Set the command for the frame.
-     *
-     * @param string $command The Command to set.
-     *
-     * @return void
-     */
-    public function setCommand($command)
-    {
-        $this->command = $command;
+        if (strlen($body) > 0) {
+            $this->setHeaderValueByKey(Headers::CONTENT_TYPE, CommonValues::TEXT_PLAIN);
+            $this->setHeaderValueByKey(Headers::CONTENT_LENGTH, strlen($body));
+        }
     }
 
     /**
@@ -182,7 +193,8 @@ class StompFrame
         $this->headersToString() .
         StompFrame::NEWLINE .
         $this->body .
-        StompFrame::NULL;
+        StompFrame::NULL .
+        StompFrame::NEWLINE;
     }
 
     /**
@@ -217,15 +229,37 @@ class StompFrame
          * CONNECTED frames do not escape the colon or newline octets
          * in order to remain backward compatible with STOMP 1.0.
          */
-        if ($this->getCommand() === Commands::CONNECTED) {
+        if ($this->getCommand() === ServerCommands::CONNECTED) {
             return $value;
         }
 
         // escape "\n , : , \\" in value
         return strtr($value, array(
             StompFrame::NEWLINE => '\n',
-            StompFrame::COLON => '\c',
-            StompFrame::ESCAPE => '\\\\',
+            StompFrame::COLON   => '\c',
+            StompFrame::ESCAPE  => '\\\\'
         ));
+    }
+
+    /**
+     * Returns the message command.
+     *
+     * @return string
+     */
+    public function getCommand()
+    {
+        return $this->command;
+    }
+
+    /**
+     * Set the command for the frame.
+     *
+     * @param string $command The Command to set.
+     *
+     * @return void
+     */
+    public function setCommand($command)
+    {
+        $this->command = $command;
     }
 }

@@ -14,7 +14,8 @@
  * @package   TechDivision_StompProtocol
  * @author    Lars Roettig <l.roettig@techdivision.com>
  * @copyright 2014 TechDivision GmbH <info@techdivision.com>
- * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @license   http://opensource.org/licenses/osl-3.0.php Open Software License
+ *            (OSL 3.0)
  * @link      https://github.com/techdivision/TechDivision_StompProtocol
  */
 
@@ -25,6 +26,11 @@ use TechDivision\Server\Interfaces\RequestContextInterface;
 use TechDivision\Server\Interfaces\ServerContextInterface;
 use TechDivision\Server\Interfaces\WorkerInterface;
 use TechDivision\Server\Sockets\SocketInterface;
+use TechDivision\StompProtocol\Utils\ClientCommands;
+use TechDivision\StompProtocol\Utils\CommonValues;
+use TechDivision\StompProtocol\Utils\ErrorMessages;
+use TechDivision\StompProtocol\Utils\Headers;
+use TechDivision\StompProtocol\Utils\ServerCommands;
 
 /**
  * Stomp connection handler
@@ -33,12 +39,20 @@ use TechDivision\Server\Sockets\SocketInterface;
  * @package   TechDivision_StompProtocol
  * @author    Lars Roettig <l.roettig@techdivision.com>
  * @copyright 2014 TechDivision GmbH <info@techdivision.com>
- * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @license   http://opensource.org/licenses/osl-3.0.php Open Software License
+ *            (OSL 3.0)
  * @link      https://github.com/techdivision/TechDivision_StompProtocol
  * @link      https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
 class StompConnectionHandler implements ConnectionHandlerInterface
 {
+
+    /**
+     * The supported protocol versions
+     *
+     * @var array
+     */
+    protected $supportedProtocolVersions;
 
     /**
      * The server context instance
@@ -76,9 +90,16 @@ class StompConnectionHandler implements ConnectionHandlerInterface
     protected $worker;
 
     /**
+     * Holds the stomp authenticator
+     *
+     * @var \TechDivision\StompProtocol\Authenticator
+     */
+    protected $auth;
+
+    /**
      * Inits the connection handler by given context and params
      *
-     * @param \TechDivision\Server\Interfaces\ServerContextInterface $serverContext The servers context
+     * @param \TechDivision\Server\Interfaces\ServerContextInterface $serverContext The server's context
      * @param array                                                  $params        The params for connection handler
      *
      * @return void
@@ -122,8 +143,9 @@ class StompConnectionHandler implements ConnectionHandlerInterface
      *
      * @return void
      */
-    public function injectRequestContext(RequestContextInterface $requestContext)
-    {
+    public function injectRequestContext(
+        RequestContextInterface $requestContext
+    ) {
         $this->requestContext = $requestContext;
     }
 
@@ -158,8 +180,8 @@ class StompConnectionHandler implements ConnectionHandlerInterface
     }
 
     /**
-     * Handles the connection with the connected client in a proper way the given
-     * protocol type and version expects for example.
+     * Handles the connection with the connected client in a proper way the
+     * given protocol type and version expects for example.
      *
      * @param \TechDivision\Server\Sockets\SocketInterface    $connection The connection to handle
      * @param \TechDivision\Server\Interfaces\WorkerInterface $worker     The worker how started this handle
@@ -172,35 +194,15 @@ class StompConnectionHandler implements ConnectionHandlerInterface
         // add connection ref to self
         $this->connection = $connection;
         $this->worker = $worker;
-        $serverContext = $this->getServerContext();
-        $serverConfig = $serverContext->getServerConfig();
-
-        // init keep alive settings
-        $keepAliveTimeout = (int)$serverConfig->getKeepAliveTimeout();
-        $keepAliveConnection = true;
-
-        // push the line into stomp request
-        $stompRequest = new StompRequest();
+        $closeConnection = false;
 
         do {
             // receive a line from the connection
-            $line = $connection->readLine(1024, $keepAliveTimeout);
+            $line = $connection->read(1024);
 
-            // add the stomp request a request line
-            $stompRequest->push($line);
+            //@todo add stomp handler
 
-            if ($stompRequest->isComplete() == true) {
-
-                /** @var \TechDivision\StompProtocol\StompFrame $stompFrame */
-                $stompFrame = $stompRequest->getStompParsedFrame();
-
-                switch ($stompFrame->getCommand()) {
-                    case Commands::CONNECT:
-                        //@todo implement this case
-                        break;
-                }
-            }
-        } while ($keepAliveConnection === true);
+        } while ($closeConnection == false);
 
         // finally close connection
         $connection->close();

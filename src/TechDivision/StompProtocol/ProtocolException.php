@@ -1,6 +1,6 @@
 <?php
 /**
- * \TechDivision\StompProtocol\CommonValues
+ * \TechDivision\StompProtocol\ProtocolException
  *
  * NOTICE OF LICENSE
  *
@@ -18,10 +18,11 @@
  * @link      https://github.com/techdivision/TechDivision_StompProtocol
  */
 
+
 namespace TechDivision\StompProtocol;
 
 /**
- * Holds the common values.
+ * Stomp protocol exception.
  *
  * @category  Library
  * @package   TechDivision_StompProtocol
@@ -29,26 +30,19 @@ namespace TechDivision\StompProtocol;
  * @copyright 2014 TechDivision GmbH <info@techdivision.com>
  * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      https://github.com/techdivision/TechDivision_StompProtocol
- *
- * @todo      add const documentation
+ * @link      https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
-class CommonValues
+class ProtocolException extends \Exception
 {
-    /**
-     *
-     * @var string
-     */
-    const V1_0 = "1.0";
 
     /**
+     * Create new protocol exception
      *
-     * @var string
+     * @param string $message Error message
+     * @param int    $code    Error code
      */
-    const V1_1 = "1.1";
-
-    /**
-     *
-     * @var string
-     */
-    const TEXT_PLAIN ="text/plain";
+    public function __construct($message = null, $code = 0)
+    {
+        parent::__construct($message, $code);
+    }
 }

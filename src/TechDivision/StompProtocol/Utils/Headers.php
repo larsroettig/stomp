@@ -1,6 +1,6 @@
 <?php
 /**
- * \TechDivision\StompProtocol\Headers
+ * TechDivision\StompProtocol\Utils\Headers
  *
  * NOTICE OF LICENSE
  *
@@ -18,7 +18,7 @@
  * @link      https://github.com/techdivision/TechDivision_StompProtocol
  */
 
-namespace TechDivision\StompProtocol;
+namespace TechDivision\StompProtocol\Utils;
 
 /**
  * Holds the advisable stomp frame headers.

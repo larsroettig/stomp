@@ -1,6 +1,6 @@
 <?php
 /**
- * \TechDivision\StompProtocol\StompResponse
+ * \TechDivision\StompProtocol\Authenticator
  *
  * NOTICE OF LICENSE
  *
@@ -16,13 +16,16 @@
  * @copyright 2014 TechDivision GmbH <info@techdivision.com>
  * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      https://github.com/techdivision/TechDivision_StompProtocol
- * @link      https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
 
-namespace TechDivision\StompProtocol;
+
+namespace TechDivision\StompProtocol\Authenticator;
+
+use TechDivision\StompProtocol\Interfaces\Authenticator;
+use TechDivision\StompProtocol\Utils\ErrorMessages;
 
 /**
- * Implementation for a Stomp Request.
+ * Stomp protocol authenticator class.
  *
  * @category  Library
  * @package   TechDivision_StompProtocol
@@ -32,6 +35,25 @@ namespace TechDivision\StompProtocol;
  * @link      https://github.com/techdivision/TechDivision_StompProtocol
  * @link      https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
-class StompResponse
+class SimpleAuthenticator implements Authenticator
 {
+
+    /**
+     * Authenticate user by connect command.
+     *
+     * @param string $login    The login name
+     * @param string $passCode The password
+     *
+     * @return string token which will be used for authorization requests (though it isn't actually used yet)
+     *
+     * @throws \Exception
+     */
+    public function connect($login, $passCode)
+    {
+        if ($login === "system" && $passCode === "manager") {
+            return md5(rand());
+        }
+
+        throw new \Exception(sprintf(ErrorMessages::FAILED_AUTH, $login));
+    }
 }

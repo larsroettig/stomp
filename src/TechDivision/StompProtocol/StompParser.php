@@ -21,6 +21,9 @@
 
 namespace TechDivision\StompProtocol;
 
+use TechDivision\StompProtocol\Utils\CommonValues;
+use TechDivision\StompProtocol\Utils\Headers;
+
 /**
  * Implementation for a Stomp Request.
  *
@@ -32,7 +35,7 @@ namespace TechDivision\StompProtocol;
  * @link      https://github.com/techdivision/TechDivision_StompProtocol
  * @link      https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
-class StompRequest
+class StompParser
 {
 
     /**
@@ -42,48 +45,21 @@ class StompRequest
      */
     protected $buffer;
 
-    /**
-     * Keeps response text that will sent to client after finish processing request.
-     *
-     * @var string
-     */
-    protected $response = '';
 
     /**
-     * Holds completion state of the Request.
+     * Parse the stomp frame.
      *
-     * @var boolean
-     */
-    protected $complete = false;
-
-    /**
-     * Central method for pushing data into VO object.
-     *
-     * @param string $line The actual request instance
-     *
-     * @return void
-     */
-    public function push($line)
-    {
-        $this->buffer .= $line;
-
-        if (strpos($this->buffer, StompFrame::NULL) !== false) {
-            $this->setComplete(true);
-        }
-    }
-
-    /**
-     *  Parse the stomp frame.
+     * @param string $buffer
      *
      * @return \TechDivision\StompProtocol\StompFrame
      */
-    public function getStompParsedFrame()
+    public function getStompParsedFrame($buffer)
     {
         // init new stomp frame
         $stompFrame = new StompFrame();
 
         // extract the body and the header
-        list($headers, $body) = explode("\n\n", $this->buffer, 2);
+        list($headers, $body) = explode("\n\n", $buffer, 2);
 
         // parse the stomp frame headers
         $stompFrame = $this->parseStompHeaders($headers, $stompFrame);
@@ -161,38 +137,5 @@ class StompRequest
             '\\c' => StompFrame::COLON,
             '\\\\' => StompFrame::ESCAPE,
         ));
-    }
-
-    /**
-     * Return's the current request state, TRUE for completed, else FALSE.
-     *
-     * @return boolean The current request state
-     */
-    protected function getComplete()
-    {
-        return $this->complete;
-    }
-
-    /**
-     * Return's TRUE if the request is complete, ELSE false
-     *
-     * @return boolean TRUE if the request is complete, ELSE false
-     * @see \TechDivision\MemcacheProtocol\CacheRequest::getComplete()
-     */
-    public function isComplete()
-    {
-        return $this->getComplete();
-    }
-
-    /**
-     * Set's current request state, TRUE for completed, else FALSE.
-     *
-     * @param boolean $value The request state
-     *
-     * @return void
-     */
-    protected function setComplete($value)
-    {
-        $this->complete = $value;
     }
 }

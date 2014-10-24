@@ -21,6 +21,10 @@
 
 namespace TechDivision\StompProtocol;
 
+use TechDivision\StompProtocol\Utils\ClientCommands;
+use TechDivision\StompProtocol\Utils\CommonValues;
+use TechDivision\StompProtocol\Utils\Headers;
+
 /**
  * Implementation for a Stomp Request.
  *
@@ -32,15 +36,15 @@ namespace TechDivision\StompProtocol;
  * @link      https://github.com/techdivision/TechDivision_StompProtocol
  * @link      https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
-class StompRequestTest extends TestCase
+class StompParserTest extends TestCase
 {
 
     /**
-     * The request instance to test.
+     * The parserinstance to test.
      *
-     * @var \TechDivision\StompProtocol\StompRequest
+     * @var \TechDivision\StompProtocol\StompParser
      */
-    protected $request;
+    protected $parser;
 
     /**
      * Initializes the configuration instance to test.
@@ -49,26 +53,7 @@ class StompRequestTest extends TestCase
      */
     public function setUp()
     {
-        $this->request = new StompRequest();
-
-    }
-
-    /**
-     *
-     * @return void
-     */
-    public function testIdentifyFrameAsCompleted()
-    {
-        $bufferContent = array(
-            Commands::CONNECT . "\n",
-            "accept-version:1.1\n",
-            "\x00"
-        );
-
-        foreach ($bufferContent as $line) {
-            $this->request->push($line);
-        }
-        $this->assertTrue($this->request->isComplete(), "Stomp Frame is not marked as complete");
+        $this->parser= new StompParser();
     }
 
     /**
@@ -77,24 +62,18 @@ class StompRequestTest extends TestCase
      */
     public function testGetStompParsedFrameV1_0()
     {
-        $bufferContent = array(
-            Commands::CONNECT . "\n",
-            "login:foo\n",
-            "passcode:bar1\n",
-            "host:/\n\n",
-            "Body\x00"
-        );
-
-        foreach ($bufferContent as $line) {
-            $this->request->push($line);
-        }
+        $bufferContent = ClientCommands::CONNECT . "\n" .
+            "login:foo\n" .
+            "passcode:bar1\n" .
+            "host:/\n\n" .
+            "Body\x00";
 
         /** @var \TechDivision\StompProtocol\StompFrame $parsedFrame */
-        $parsedFrame = $this->request->getStompParsedFrame();
-        $this->assertEquals(Commands::CONNECT, $parsedFrame->getCommand());
-        $this->assertEquals(4, count($parsedFrame->getHeaders()));
+        $parsedFrame = $this->parser->getStompParsedFrame($bufferContent);
+        $this->assertEquals(ClientCommands::CONNECT, $parsedFrame->getCommand());
+        $this->assertEquals(6, count($parsedFrame->getHeaders()));
         $this->assertEquals("Body", $parsedFrame->getBody());
-        $this->assertEquals(CommonValues::V1_0, $parsedFrame->getHeaderByKey(Headers::ACCEPT_VERSION));
+        $this->assertEquals(CommonValues::V1_0, $parsedFrame->getHeaderValueByKey(Headers::ACCEPT_VERSION));
     }
 
     /**
@@ -104,14 +83,14 @@ class StompRequestTest extends TestCase
     public function testGetParseStompHeadersV1_1()
     {
         // header string with duplicate header value
-        $header = Commands::CONNECT . "\naccept-version:1.1\nlogin:foo\nlogin:test\npasscode:bar";
+        $header = ClientCommands::CONNECT . "\naccept-version:1.1\nlogin:foo\nlogin:test\npasscode:bar";
         $stompFrame = new StompFrame();
 
         /** @var \TechDivision\StompProtocol\StompFrame $parsedFrame */
-        $parsedFrame = $this->invokeMethod($this->request, "parseStompHeaders", array($header, $stompFrame));
+        $parsedFrame = $this->invokeMethod($this->parser, "parseStompHeaders", array($header, $stompFrame));
 
-        $this->assertEquals(Commands::CONNECT, $parsedFrame->getCommand());
+        $this->assertEquals(ClientCommands::CONNECT, $parsedFrame->getCommand());
         $this->assertEquals(3, count($parsedFrame->getHeaders()));
-        $this->assertEquals("foo", $parsedFrame->getHeaderByKey(Headers::LOGIN));
+        $this->assertEquals("foo", $parsedFrame->getHeaderValueByKey(Headers::LOGIN));
     }
 }

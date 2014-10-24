@@ -5,3 +5,4 @@
 /target
 /composer.lock
 /vendor
+build.properties
