@@ -21,9 +21,9 @@
 
 namespace TechDivision\StompProtocol;
 
-use TechDivision\StompProtocol\Utils\CommonValues;
-use TechDivision\StompProtocol\Utils\Headers;
-use TechDivision\StompProtocol\Utils\ServerCommands;
+use TechDivision\StompProtocol\Protocol\CommonValues;
+use TechDivision\StompProtocol\Protocol\Headers;
+use TechDivision\StompProtocol\Protocol\ServerCommands;
 
 /**
  * Implementation for a Stomp frame.

@@ -18,7 +18,7 @@
  * @link      https://github.com/techdivision/TechDivision_StompProtocol
  */
 
-namespace TechDivision\StompProtocol\Utils;
+namespace TechDivision\StompProtocol\Protocol;
 
 /**
  * Holds the common values.
@@ -35,16 +35,25 @@ namespace TechDivision\StompProtocol\Utils;
 class CommonValues
 {
     /**
+     * Defines the Stomp protocol 1.0 version identifier
      *
      * @var string
      */
     const V1_0 = "1.0";
 
     /**
+     * Defines the Stomp protocol 1.1 version identifier
      *
      * @var string
      */
     const V1_1 = "1.1";
+
+    /**
+     * Defines the Stomp protocol 1.2 version identifier
+     *
+     * @var string
+     */
+    const V1_2 = "1.1";
 
     /**
      *

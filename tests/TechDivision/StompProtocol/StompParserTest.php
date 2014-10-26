@@ -21,9 +21,9 @@
 
 namespace TechDivision\StompProtocol;
 
-use TechDivision\StompProtocol\Utils\ClientCommands;
-use TechDivision\StompProtocol\Utils\CommonValues;
-use TechDivision\StompProtocol\Utils\Headers;
+use TechDivision\StompProtocol\Protocol\ClientCommands;
+use TechDivision\StompProtocol\Protocol\CommonValues;
+use TechDivision\StompProtocol\Protocol\Headers;
 
 /**
  * Implementation for a Stomp Request.

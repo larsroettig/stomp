@@ -42,4 +42,11 @@ interface Authenticator
      * @return string token which will be used for authorization requests.
      */
     public function connect($login, $passCode);
+
+    /**
+     * Returns is authenticated user.
+     *
+     * @return bool
+     */
+    public function getIsAuthenticated();
 }

@@ -18,7 +18,7 @@
  * @link      https://github.com/techdivision/TechDivision_StompProtocol
  */
 
-namespace TechDivision\StompProtocol\Utils;
+namespace TechDivision\StompProtocol\Protocol;
 
 /**
  * Holds the advisable stomp frame headers.

@@ -37,6 +37,11 @@ use TechDivision\StompProtocol\Utils\ErrorMessages;
  */
 class SimpleAuthenticator implements Authenticator
 {
+    /**
+     *
+     * @var bool
+     */
+    protected $isAuthenticated = false;
 
     /**
      * Authenticate user by connect command.
@@ -51,9 +56,20 @@ class SimpleAuthenticator implements Authenticator
     public function connect($login, $passCode)
     {
         if ($login === "system" && $passCode === "manager") {
+            $this->isAuthenticated = true;
             return md5(rand());
         }
 
         throw new \Exception(sprintf(ErrorMessages::FAILED_AUTH, $login));
+    }
+
+    /**
+     * Returns is authenticated user.
+     *
+     * @return bool
+     */
+    public function getIsAuthenticated()
+    {
+        $this->isAuthenticated;
     }
 }
