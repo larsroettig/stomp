@@ -225,20 +225,33 @@ class StompFrame
      */
     protected function encodeHeaderString($value)
     {
+        // Encode the header if encode header required.
+        if ($this->getHeaderEncodingRequired()) {
+            // escape "\n , : , \\" in value
+            $value = strtr($value, array(
+                StompFrame::NEWLINE => '\n',
+                StompFrame::COLON   => '\c',
+                StompFrame::ESCAPE  => '\\\\'
+            ));
+        }
+        return $value;
+    }
+
+    /**
+     * Returns is for the current frame encode header required.
+     *
+     * @return bool
+     */
+    protected function getHeaderEncodingRequired()
+    {
         /*
          * CONNECTED frames do not escape the colon or newline octets
          * in order to remain backward compatible with STOMP 1.0.
          */
         if ($this->getCommand() === ServerCommands::CONNECTED) {
-            return $value;
+            return false;
         }
-
-        // escape "\n , : , \\" in value
-        return strtr($value, array(
-            StompFrame::NEWLINE => '\n',
-            StompFrame::COLON   => '\c',
-            StompFrame::ESCAPE  => '\\\\'
-        ));
+        return true;
     }
 
     /**

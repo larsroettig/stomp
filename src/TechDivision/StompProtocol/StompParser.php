@@ -37,39 +37,19 @@ use TechDivision\StompProtocol\Protocol\Headers;
  */
 class StompParser
 {
+    /**
+     *
+     * @var \TechDivision\StompProtocol\StompFrame
+     */
+    protected $stompFrame;
 
     /**
-     * Holds the stomp line buffer
-     *
-     * @var string
+     * @param \TechDivision\StompProtocol\StompFrame $stompFrame
      */
-    protected $buffer;
-
-
-    /**
-     * Parse the stomp frame.
-     *
-     * @param string $buffer The input buffer to parse a stomp frame.
-     *
-     * @return \TechDivision\StompProtocol\StompFrame
-     */
-    public function getStompParsedFrame($buffer)
-    {
-        // init new stomp frame
-        $stompFrame = new StompFrame();
-
-        // extract the body and the header
-        list($headers, $body) = explode("\n\n", $buffer, 2);
-
-        // parse the stomp frame headers
-        $stompFrame = $this->parseStompHeaders($headers, $stompFrame);
-
-        // add the stomp body
-        $stompFrame->setBody(trim($body, StompFrame::NULL));
-
-        // returns the stomp frame
-        return $stompFrame;
-    }
+   public function __construct(StompFrame $stompFrame)
+   {
+       $this->stompFrame = $stompFrame;
+   }
 
     /**
      * Parse the stomp frame headers and set in the given stomp frame.
@@ -77,21 +57,15 @@ class StompParser
      * @param string                                 $header     The header to parse
      * @param \TechDivision\StompProtocol\StompFrame $stompFrame The stomp frame to set the header values
      *
-     * @return \TechDivision\StompProtocol\StompFrame
+     * @return void
      */
-    protected function parseStompHeaders($header, StompFrame $stompFrame)
+   public function parseStompHeaders($header)
     {
         // the parsed headers
         $headers = array();
 
-        // remove one new character
-        $header = ltrim($header, StompFrame::NEWLINE);
-
         // get lines by explode header stomp newline
         $lines = explode(StompFrame::NEWLINE, $header);
-
-        // the first line is the stomp command
-        $stompFrame->setCommand(array_shift($lines));
 
         // iterate over all header lines
         foreach ($lines as $line) {
@@ -117,10 +91,7 @@ class StompParser
         }
 
         // add the parsed headers
-        $stompFrame->setHeaders($headers);
-
-        // returns the stomp frame
-        return $stompFrame;
+        $this->stompFrame->setHeaders($headers);
     }
 
     /**
@@ -137,5 +108,13 @@ class StompParser
             '\\c' => StompFrame::COLON,
             '\\\\' => StompFrame::ESCAPE,
         ));
+    }
+
+    /**
+     * @return \TechDivision\StompProtocol\StompFrame
+     */
+    public function getStompFrame()
+    {
+        return $this->stompFrame;
     }
 }

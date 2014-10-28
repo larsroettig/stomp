@@ -26,11 +26,7 @@ use TechDivision\Server\Interfaces\RequestContextInterface;
 use TechDivision\Server\Interfaces\ServerContextInterface;
 use TechDivision\Server\Interfaces\WorkerInterface;
 use TechDivision\Server\Sockets\SocketInterface;
-use TechDivision\StompProtocol\Utils\ClientCommands;
-use TechDivision\StompProtocol\Utils\CommonValues;
 use TechDivision\StompProtocol\Utils\ErrorMessages;
-use TechDivision\StompProtocol\Utils\Headers;
-use TechDivision\StompProtocol\Utils\ServerCommands;
 
 /**
  * Stomp connection handler
