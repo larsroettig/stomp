@@ -22,6 +22,7 @@
 namespace TechDivision\StompProtocol;
 
 use TechDivision\StompProtocol\Authenticator\SimpleAuthenticator;
+use TechDivision\StompProtocol\Protocol\ClientCommands;
 use TechDivision\StompProtocol\Protocol\CommonValues;
 use TechDivision\StompProtocol\Protocol\Headers;
 use TechDivision\StompProtocol\Protocol\ServerCommands;
@@ -76,6 +77,37 @@ class StompProtocolHandler
     {
         $this->auth = new SimpleAuthenticator();
     }
+
+
+    /**
+     * Handle the connect request.
+     *
+     * @param \TechDivision\StompProtocol\StompFrame $stompFrame The Stomp frame to handle the connect.
+     *
+     * @return \TechDivision\StompProtocol\StompFrame The stomp frame Response
+     *
+     * @throws \TechDivision\StompProtocol\ProtocolException
+     */
+    public function handle(StompFrame $stompFrame)
+    {
+        $response = null;
+        switch ($stompFrame->getCommand()) {
+
+            case ClientCommands::CONNECT:
+            case ClientCommands::STOMP:
+                $response = $this->handler->handleConnect($stompFrame);
+                break;
+
+            case ClientCommands::SEND:
+                break;
+
+            case ClientCommands::DISCONNECT:
+                $response = new StompFrame(ServerCommands::RECEIPT);
+        }
+
+        return $response;
+    }
+
 
     /**
      * Handle the connect request.

@@ -21,6 +21,7 @@
 
 namespace TechDivision\StompProtocol\Authenticator;
 
+use TechDivision\StompProtocol\Exception\StompProtocolException;
 use TechDivision\StompProtocol\Interfaces\Authenticator;
 use TechDivision\StompProtocol\Utils\ErrorMessages;
 
@@ -60,7 +61,7 @@ class SimpleAuthenticator implements Authenticator
             return md5(rand());
         }
 
-        throw new \Exception(sprintf(ErrorMessages::FAILED_AUTH, $login));
+        throw new StompProtocolException(sprintf(ErrorMessages::FAILED_AUTH, $login));
     }
 
     /**

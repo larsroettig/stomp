@@ -198,7 +198,7 @@ class StompFrame
     }
 
     /**
-     * Convert teh frame headers to string.
+     * Convert the frame headers to string.
      *
      * @return string
      */

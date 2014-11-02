@@ -1,7 +1,7 @@
 <?php
 
 /**
- * \TechDivision\StompProtocol\TestCase
+ * \TechDivision\StompProtocol\HelperTestCase
  *
  * NOTICE OF LICENSE
  *
@@ -33,7 +33,7 @@ namespace TechDivision\StompProtocol;
  * @link      https://github.com/techdivision/TechDivision_StompProtocol
  * @link      https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
-class TestCase extends \PHPUnit_Framework_TestCase
+class HelperTestCase extends \PHPUnit_Framework_TestCase
 {
     /**
      * Call protected/private method of a class.

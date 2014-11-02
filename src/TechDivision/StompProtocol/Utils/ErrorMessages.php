@@ -33,7 +33,8 @@ namespace TechDivision\StompProtocol\Utils;
 class ErrorMessages
 {
 
+    const FAILED_AUTH = "Failed login while attempting to authenticate user %s";
+    const HEADER_VALIDATION_ERROR = "Validation error %s is not valid to type: %s";
     const SUPPORTED_PROTOCOL_VERSIONS = "Supported protocol versions are %s";
-
-    const FAILED_AUTH =  "Failed login while attempting to authenticate user %s";
+    const UNABLE_PARSE_HEADER_LINE = "Unable to parser header line.";
 }

@@ -21,11 +21,13 @@
 
 namespace TechDivision\StompProtocol;
 
+use Psr\Log\LogLevel;
 use TechDivision\Server\Interfaces\ConnectionHandlerInterface;
 use TechDivision\Server\Interfaces\RequestContextInterface;
 use TechDivision\Server\Interfaces\ServerContextInterface;
 use TechDivision\Server\Interfaces\WorkerInterface;
 use TechDivision\Server\Sockets\SocketInterface;
+use TechDivision\StompProtocol\Exception\StompProtocolException;
 use TechDivision\StompProtocol\Utils\ErrorMessages;
 
 /**
@@ -86,11 +88,11 @@ class StompConnectionHandler implements ConnectionHandlerInterface
     protected $worker;
 
     /**
-     * Holds the stomp authenticator
+     * The logger for the connection handler
      *
-     * @var \TechDivision\StompProtocol\Authenticator
+     * @var \Psr\Log\LoggerInterface
      */
-    protected $auth;
+    protected $logger;
 
     /**
      * Inits the connection handler by given context and params
@@ -108,6 +110,9 @@ class StompConnectionHandler implements ConnectionHandlerInterface
 
         // register shutdown handler
         register_shutdown_function(array(&$this, "shutdown"));
+
+        // get the logger for the connection handler
+        $this->logger = $serverContext->getLogger();
     }
 
     /**
@@ -191,17 +196,111 @@ class StompConnectionHandler implements ConnectionHandlerInterface
         $this->connection = $connection;
         $this->worker = $worker;
         $closeConnection = false;
+        $stompProtocolHandler = new StompProtocolHandler();
 
         do {
-            // receive a line from the connection
-            $line = $connection->read(1024);
 
-            //@todo add stomp handler
+            try {
+                // read the first line from the connection.
+                $command = $connection->readLine();
 
+                // if no command receive retry receive command
+                if (strlen($command) == 0) {
+                    continue;
+                }
+
+                // remove the newline from the command
+                $command = rtrim($command, StompFrame::NEWLINE);
+
+                // init new stomp frame with received command
+                $stompFrame = new StompFrame($command);
+
+                // init new stomp frame parser
+                $stompParser = new StompParser();
+
+                // read frame headers to empty string
+                $stompHeaders = array();
+
+                // read the headers from the connection
+                do {
+                    // read next line
+                    $line = $connection->readLine();
+
+                    // stomp header are complete
+                    if ($line === StompFrame::NEWLINE) {
+                        break;
+                    }
+
+                    // remove the last line break
+                    $line = rtrim($line, StompFrame::NEWLINE);
+
+                    // parse a single stomp header line
+                    $stompParser->parseStompHeaderLine($line, $stompHeaders);
+                } while (true);
+
+                // set the headers for the stomp frame
+                $stompFrame->setHeaders($stompHeaders);
+
+                // read the stomp body
+                $stompBody = "";
+                do {
+                    $stompBody .= $connection->read(1);
+                } while (strpos($stompBody, StompFrame::NULL));
+
+                // set the body for the stomp frame
+                $stompFrame->setBody($stompBody);
+
+                //log for frame receive
+                $this->log("FrameReceive", $stompFrame, LogLevel::DEBUG);
+
+                $response = $stompProtocolHandler->handle($stompFrame);
+
+                if (isset($response)) {
+                    // stomp protocol handler
+                    $this->writeFrame($response, $connection);
+                }
+            } catch (StompProtocolException $e) {
+                $response = $stompProtocolHandler->handleError($e);
+                $this->writeFrame($response, $connection);
+                $closeConnection = true;
+            }
         } while ($closeConnection == false);
 
         // finally close connection
         $connection->close();
+    }
+
+    /**
+     * Logs with an arbitrary level.
+     *
+     * @param string $message The message to log
+     * @param mixed  $params  The params to export
+     * @param string $level   The level to log
+     *
+     * @return void
+     */
+    protected function log($message, $params, $level = LogLevel::INFO)
+    {
+        if (isset($params)) {
+            $message .= var_export($params, true);
+        }
+
+        $this->logger->log($level, $message);
+    }
+
+    /**
+     * Write a stomp frame
+     *
+     * @param \TechDivision\StompProtocol\StompFrame       $stompFrame
+     * @param \TechDivision\Server\Sockets\SocketInterface $connection
+     *
+     * @return void
+     */
+    public function writeFrame(StompFrame $stompFrame, SocketInterface $connection)
+    {
+        $stompFrameStr = (string)$stompFrame;
+        $this->log("FrameSend", $stompFrame, LogLevel::DEBUG);
+        $connection->write($stompFrameStr);
     }
 
     /**
