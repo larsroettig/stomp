@@ -83,7 +83,7 @@ class StompParserTest extends TestCase
     public function testGetParseStompHeadersV1_1()
     {
         // header string with duplicate header value
-        $header = ClientCommands::CONNECT . "\naccept-version:1.1\nlogin:foo\nlogin:test\npasscode:bar";
+        $header = "accept-version:1.1\nlogin:foo\nlogin:test\npasscode:bar";
         $stompFrame = new StompFrame();
 
         /** @var \TechDivision\StompProtocol\StompFrame $parsedFrame */
