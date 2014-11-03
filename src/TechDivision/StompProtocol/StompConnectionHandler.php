@@ -201,8 +201,16 @@ class StompConnectionHandler implements ConnectionHandlerInterface
         do {
 
             try {
-                // read the first line from the connection.
-                $command = $connection->readLine();
+
+
+                $command = "";
+
+                try {
+                    // read the first line from the connection.
+                    $command = $connection->readLine();
+                } catch (\Exception $e) {
+                    // do nothing connection must open
+                }
 
                 // if no command receive retry receive command
                 if (strlen($command) == 0) {
@@ -218,9 +226,6 @@ class StompConnectionHandler implements ConnectionHandlerInterface
                 // init new stomp frame parser
                 $stompParser = new StompParser();
 
-                // read frame headers to empty string
-                $stompHeaders = array();
-
                 // read the headers from the connection
                 do {
                     // read next line
@@ -235,23 +240,24 @@ class StompConnectionHandler implements ConnectionHandlerInterface
                     $line = rtrim($line, StompFrame::NEWLINE);
 
                     // parse a single stomp header line
-                    $stompParser->parseStompHeaderLine($line, $stompHeaders);
+                    $stompParser->parseStompHeaderLine($line);
                 } while (true);
 
+
                 // set the headers for the stomp frame
-                $stompFrame->setHeaders($stompHeaders);
+                $stompFrame->setHeaders($stompParser->getParsedHeaders());
 
                 // read the stomp body
                 $stompBody = "";
                 do {
                     $stompBody .= $connection->read(1);
-                } while (strpos($stompBody, StompFrame::NULL));
+                } while (false === strpos($stompBody, StompFrame::NULL));
 
                 // set the body for the stomp frame
                 $stompFrame->setBody($stompBody);
 
                 //log for frame receive
-                $this->log("FrameReceive", $stompFrame, LogLevel::DEBUG);
+                $this->log("FrameReceive", $stompFrame, LogLevel::INFO);
 
                 $response = $stompProtocolHandler->handle($stompFrame);
 
@@ -299,7 +305,7 @@ class StompConnectionHandler implements ConnectionHandlerInterface
     public function writeFrame(StompFrame $stompFrame, SocketInterface $connection)
     {
         $stompFrameStr = (string)$stompFrame;
-        $this->log("FrameSend", $stompFrame, LogLevel::DEBUG);
+        $this->log("FrameSend", $stompFrame, LogLevel::INFO);
         $connection->write($stompFrameStr);
     }
 

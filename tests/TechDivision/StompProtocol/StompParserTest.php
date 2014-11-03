@@ -65,7 +65,8 @@ class StompParserTest extends HelperTestCase
         // header string with duplicate header value
         $header = "accept-version:1.1\nlogin:foo\nlogin:test\npasscode:bar";
 
-        $headers = $this->parser->parseStompHeaders($header);
+        $this->parser->parseStompHeaders($header);
+        $headers = $this->parser->getParsedHeaders();
 
         $this->assertEquals(3, count($headers));
         $this->assertEquals("foo", $headers[Headers::LOGIN]);
@@ -78,7 +79,9 @@ class StompParserTest extends HelperTestCase
     {
         // header string with duplicate header value
         $header = "login:foo\npasscode:bar";
-        $headers = $this->parser->parseStompHeaders($header);
+        $this->parser->parseStompHeaders($header);
+        $headers = $this->parser->getParsedHeaders();
+
         $this->assertEquals(3, count($headers));
         $this->assertEquals("1.0", $headers[Headers::ACCEPT_VERSION]);
     }

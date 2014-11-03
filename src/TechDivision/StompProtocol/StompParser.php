@@ -46,6 +46,11 @@ class StompParser
      * @var array
      */
     protected $keyValidationList;
+    /**
+     *
+     * @var
+     */
+    protected $headers;
 
     /**
      * Init the stomp parser class.
@@ -53,6 +58,28 @@ class StompParser
     public function __construct()
     {
         $this->setKeyValidationList(array(Headers::CONTENT_LENGTH => "int"));
+        $this->setHeaders(array());
+    }
+
+    /**
+     * @param mixed $headers
+     */
+    public function setHeaders($headers)
+    {
+        $this->headers = $headers;
+    }
+
+    /**
+     * @return array
+     */
+    public function getParsedHeaders()
+    {
+        // is accept-version not set than set to stomp version 1.0
+        if (!array_key_exists(Headers::ACCEPT_VERSION, $this->headers)) {
+            $this->headers[Headers::ACCEPT_VERSION] = CommonValues::V1_0;
+        }
+
+        return $this->headers;
     }
 
     /**
@@ -61,7 +88,7 @@ class StompParser
      * @param string                                 $header     The header to parse
      * @param \TechDivision\StompProtocol\StompFrame $stompFrame The stomp frame to set the header values
      *
-     * @return array
+     * @return void
      *
      * @throws \TechDivision\StompProtocol\Exception\StompProtocolException
      */
@@ -75,16 +102,8 @@ class StompParser
 
         // iterate over all header lines
         foreach ($lines as $line) {
-            $headers = $this->parseStompHeaderLine($line, $headers);
+            $this->parseStompHeaderLine($line, $headers);
         }
-
-        // is accept-version not set than set to stomp version 1.0
-        if (!array_key_exists(Headers::ACCEPT_VERSION, $headers)) {
-            $headers[Headers::ACCEPT_VERSION] = CommonValues::V1_0;
-        }
-
-        // returns the header array
-        return $headers;
     }
 
     /**
@@ -93,10 +112,11 @@ class StompParser
      * @param string $headerLine The line to parse
      * @param array  $headers    The header to set the key value pair
      *
-     * @return array
+     * @return void
+     *
      * @throws \TechDivision\StompProtocol\Exception\StompProtocolException
      */
-    public function parseStompHeaderLine($headerLine , array $headers)
+    public function parseStompHeaderLine($headerLine)
     {
         // checks contains the line a separator
         if (strpos($headerLine, StompFrame::COLON) === false) {
@@ -116,8 +136,8 @@ class StompParser
         $value = $this->decodeHeaderString($value);
 
         // ignore existing keys
-        if (array_key_exists($key, $headers) == true) {
-          return $headers;
+        if (array_key_exists($key, $this->headers) == true) {
+            return;
         }
 
         // validate the value by given key
@@ -127,10 +147,7 @@ class StompParser
         }
 
         // set the key value pair
-        $headers[$key] = $value;
-
-        // return the headers
-        return $headers;
+        $this->headers[$key] = $value;
     }
 
     /**

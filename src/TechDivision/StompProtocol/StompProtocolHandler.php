@@ -21,12 +21,14 @@
 
 namespace TechDivision\StompProtocol;
 
+use TechDivision\MessageQueue\MessageQueue;
 use TechDivision\StompProtocol\Authenticator\SimpleAuthenticator;
 use TechDivision\StompProtocol\Protocol\ClientCommands;
 use TechDivision\StompProtocol\Protocol\CommonValues;
 use TechDivision\StompProtocol\Protocol\Headers;
 use TechDivision\StompProtocol\Protocol\ServerCommands;
 use TechDivision\StompProtocol\Utils\ErrorMessages;
+use TechDivision\StompProtocol\Exception\StompProtocolException;
 
 /**
  * Implementation to handle stomp request.
@@ -52,7 +54,7 @@ class StompProtocolHandler
     /**
      * Holds the stomp authenticator
      *
-     * @var \TechDivision\StompProtocol\Authenticator
+     * @var \TechDivision\StompProtocol\Interfaces\Authenticator
      */
     protected $auth;
 
@@ -78,7 +80,6 @@ class StompProtocolHandler
         $this->auth = new SimpleAuthenticator();
     }
 
-
     /**
      * Handle the connect request.
      *
@@ -95,7 +96,7 @@ class StompProtocolHandler
 
             case ClientCommands::CONNECT:
             case ClientCommands::STOMP:
-                $response = $this->handler->handleConnect($stompFrame);
+                $response = $this->handleConnect($stompFrame);
                 break;
 
             case ClientCommands::SEND:
