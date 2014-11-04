@@ -21,7 +21,9 @@
 
 namespace TechDivision\StompProtocol;
 
-use TechDivision\MessageQueue\MessageQueue;
+use TechDivision\MessageQueueClient\MessageQueue;
+use TechDivision\MessageQueueClient\QueueConnectionFactory;
+use TechDivision\MessageQueueProtocol\Messages\StringMessage;
 use TechDivision\StompProtocol\Authenticator\SimpleAuthenticator;
 use TechDivision\StompProtocol\Protocol\ClientCommands;
 use TechDivision\StompProtocol\Protocol\CommonValues;
@@ -148,15 +150,28 @@ class StompProtocolHandler
      *
      * @param \TechDivision\StompProtocol\StompFrame $stompFrame The Stomp frame to handle the connect.
      *
-     * @return \TechDivision\StompProtocol\StompFrame The stomp frame Response
+     * @return void
      *
      * @throws \TechDivision\StompProtocol\ProtocolException
      */
     public function handleSend(StompFrame $stompFrame)
     {
-        $headers = array(Headers::MESSAGE_ID, rand());
 
-        return new StompFrame(ServerCommands::MESSAGE, $headers);
+        $destination = $stompFrame->getHeaderValueByKey(Headers::DESTINATION);
+        // initialize the connection and the session
+        $queue = MessageQueue::createQueue($destination);
+        $connection = QueueConnectionFactory::createQueueConnection("stomp");
+        $session = $connection->createQueueSession();
+
+        // create the sender and send a simple string message
+        $sender = $session->createSender($queue);
+        /** @var \TechDivision\MessageQueueProtocol\QueueResponse */
+        $response = $sender->send(new StringMessage($stompFrame->getBody()));
+
+        // message can not send
+        if ($response->success() === false) {
+            throw new StompProtocolException("Error");
+        }
     }
 
     /**
