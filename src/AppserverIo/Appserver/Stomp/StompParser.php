@@ -149,7 +149,7 @@ class StompParser implements StompRequestParserInterface
         // validate the value by given key
         if ($this->validateHeaderValue($key, $value) === false) {
             $type = $this->keyValidationList[$key];
-            throw new StompProtocolException(sprintf(ErrorMessages::HEADER_VALIDATION_ERROR, $key, $value));
+            throw new StompProtocolException(sprintf(ErrorMessages::HEADER_VALIDATION_ERROR, $key, $type));
         }
 
         // set the key value pair

@@ -10,13 +10,13 @@
  *
  * PHP version 5
  *
- * @category   Library
- * @package    TechDivision_StompProtocol
+ * @category   AppserverIo
+ * @package    Appserver
+ * @subpackage Stomp
  * @author     Lars Roettig <l.roettig@techdivision.com>
  * @copyright  2014 TechDivision GmbH <info@techdivision.com>
  * @license    http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link       https://github.com/appserver-io/appserver
- * @link       https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
 
 namespace AppserverIo\Appserver\Stomp;
@@ -87,8 +87,6 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
 
     /**
      * Init new stomp protocol handler.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -102,6 +100,8 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
      * Injects the supported protocol versions for the handler.
      *
      * @param array $supportedProtocolVersion Array with supported protocol versions
+     *
+     * @return void
      */
     public function injectSupportedProtocolVersions(array $supportedProtocolVersion)
     {
@@ -198,6 +198,8 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
     }
 
     /**
+     * Returns the authenticator,
+     *
      * @return \AppserverIo\Appserver\Stomp\Interfaces\Authenticator
      */
     public function getAuthenticator()
@@ -206,6 +208,8 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
     }
 
     /**
+     * Returns the message queue session.
+     *
      * @return \AppserverIo\MessageQueueClient\QueueSession
      */
     public function getSession()
@@ -214,7 +218,11 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
     }
 
     /**
-     * @param \AppserverIo\MessageQueueClient\QueueSession $session
+     * Set the message queue session.
+     *
+     * @param \AppserverIo\MessageQueueClient\QueueSession $session The  message queue session to set.
+     *
+     * @return void
      */
     public function setSession($session)
     {
@@ -253,11 +261,9 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
     /**
      * Handle the disconnect request.
      *
-     * @param \AppserverIo\Appserver\Stomp\StompFrame $stompFrame The Stomp frame to handle the connect.
-     *
      * @return \AppserverIo\Appserver\Stomp\StompFrame The stomp frame Response
      */
-    protected function handleDisConnect(StompFrame $stompFrame)
+    protected function handleDisConnect()
     {
         // set state to close the client connection
         $this->mustConnectionClose = true;
@@ -278,8 +284,8 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
     /**
      * Sets the state from handler to error
      *
-     * @param string $message
-     * @param array  $headers
+     * @param string $message The message to set in the error frame.
+     * @param array  $headers The header to set in the error frame.
      *
      * @return mixed
      */

@@ -71,5 +71,4 @@ interface StompRequestParserInterface
      * @return void
      */
     public function clearHeaders();
-
 }

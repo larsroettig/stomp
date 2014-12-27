@@ -41,7 +41,7 @@ interface StompProtocolHandlerInterface
     /**
      * Handles a stomp frame.
      *
-     * @param \AppserverIo\Appserver\Stomp\StompFrame $stompFrame
+     * @param \AppserverIo\Appserver\Stomp\StompFrame $stompFrame the stomp frame to handle.
      *
      * @return void
      */
@@ -58,8 +58,8 @@ interface StompProtocolHandlerInterface
     /**
      * Sets the state from handler to error.
      *
-     * @param string $message
-     * @param array  $headers
+     * @param string $message the message to set for the error frame.
+     * @param array  $headers headers to set to error frame.
      *
      * @return mixed
      */

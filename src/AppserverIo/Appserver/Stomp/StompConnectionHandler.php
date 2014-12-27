@@ -1,26 +1,19 @@
 <?php
 
 /**
- * \AppserverIo\WebServer\ConnectionHandlers
+ * Stomp protocol authenticator interface
  *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is available through the world-wide-web at this URL:
- * http://opensource.org/licenses/osl-3.0.php
- *
- * PHP version 5
- *
- * @category    Server
- * @package     WebServer
- * @subpackage  ConnectionHandlers
- * @author      Lars Roettig <l.roettig@techdivision.com>
- * @copyright   2014 TechDivision GmbH <info@appserver.io>
- * @license     http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link        https://github.com/appserver-io/appserver
+ * @category   AppserverIo
+ * @package    Appserver
+ * @subpackage Stomp
+ * @author     Lars Roettig <l.roettig@techdivision.com>
+ * @copyright  2014 TechDivision GmbH <info@techdivision.com>
+ * @license    http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link       https://github.com/appserver-io/appserver
+ * @link       https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
 
-namespace AppserverIo\WebServer\ConnectionHandlers;
+namespace AppserverIo\Appserver\Stomp;
 
 use AppserverIo\Appserver\Stomp\Interfaces\StompProtocolHandlerInterface;
 use AppserverIo\Appserver\Stomp\StompFrame;
@@ -39,16 +32,10 @@ use AppserverIo\Psr\Socket\SocketReadException;
 use AppserverIo\Psr\Socket\SocketReadTimeoutException;
 use AppserverIo\Psr\Socket\SocketServerException;
 use AppserverIo\Psr\HttpMessage\Protocol;
-use AppserverIo\Http\HttpRequest;
-use AppserverIo\Http\HttpResponse;
-use AppserverIo\Http\HttpPart;
-use AppserverIo\Http\HttpQueryParser;
-use AppserverIo\Http\HttpRequestParser;
-use AppserverIo\Http\HttpResponseStates;
 use Psr\Log\LogLevel;
 
 /**
- * Class HttpConnectionHandler
+ * Class StompConnectionHandler
  *
  * @category   AppserverIo
  * @package    Appserver
@@ -57,9 +44,11 @@ use Psr\Log\LogLevel;
  * @copyright  2014 TechDivision GmbH <info@appserver.io>
  * @license    http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link       https://github.com/appserver-io/appserver
+ * @link       https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
 class StompConnectionHandler implements ConnectionHandlerInterface
 {
+
 
     /**
      * Hold's the server context instance
@@ -131,6 +120,8 @@ class StompConnectionHandler implements ConnectionHandlerInterface
      * @param array                                                 $params        The params for connection handler
      *
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function init(ServerContextInterface $serverContext, array $params = null)
     {
@@ -142,18 +133,6 @@ class StompConnectionHandler implements ConnectionHandlerInterface
 
         // get the logger for the connection handler
         $this->logger = $serverContext->getLogger();
-    }
-
-    /**
-     * Inject the handler stomp handler to handle stomp request.
-     *
-     * @param StompProtocolHandlerInterface $protocolHandler
-     *
-     * @return  void
-     */
-    public function injectProtocolHandler(StompProtocolHandlerInterface $protocolHandler)
-    {
-        $this->protocolHandler = $protocolHandler;
     }
 
     /**
@@ -190,14 +169,6 @@ class StompConnectionHandler implements ConnectionHandlerInterface
         if (isset($this->modules[$name])) {
             return $this->modules[$name];
         }
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getProtocolHandler()
-    {
-        return $this->protocolHandler;
     }
 
     /**
@@ -303,6 +274,9 @@ class StompConnectionHandler implements ConnectionHandlerInterface
                     $stompBody .= $connection->read(1);
                 } while (false === strpos($stompBody, StompFrame::NULL));
 
+                // removes the null frame from the body string
+                $stompBody = str_replace(StompFrame::NULL, "", $stompBody);
+
                 // set the body for the stomp frame
                 $stompFrame->setBody($stompBody);
 
@@ -322,7 +296,7 @@ class StompConnectionHandler implements ConnectionHandlerInterface
             } catch (\Exception $e) {
 
                 // set the current exception as error to get the error frame for the stream
-                $this->getProtocolHandler()->setErrorState($e->getMessage());
+                $this->getProtocolHandler()->setErrorState($e->getMessage(), array());
                 $response = $this->getProtocolHandler()->getResponseStompFrame();
                 $this->writeFrame($response, $connection);
 
@@ -334,6 +308,18 @@ class StompConnectionHandler implements ConnectionHandlerInterface
         // finally close connection
         $connection->close();
 
+    }
+
+    /**
+     * Inject the handler stomp handler to handle stomp request.
+     *
+     * @param StompProtocolHandlerInterface $protocolHandler the protocol handler to inject.
+     *
+     * @return  void
+     */
+    public function injectProtocolHandler(StompProtocolHandlerInterface $protocolHandler)
+    {
+        $this->protocolHandler = $protocolHandler;
     }
 
     /**
@@ -354,6 +340,15 @@ class StompConnectionHandler implements ConnectionHandlerInterface
         $this->logger->log($level, $message);
     }
 
+    /**
+     * Returns the protocol handler.
+     *
+     * @return \AppserverIo\Appserver\Stomp\Interfaces\StompProtocolHandlerInterface
+     */
+    public function getProtocolHandler()
+    {
+        return $this->protocolHandler;
+    }
 
     /**
      * Write a stomp frame
