@@ -1,6 +1,6 @@
 <?php
 /**
- * \TechDivision\StompProtocol\StompConnectionHandler
+ * \AppserverIo\Appserver\Stomp\StompConnectionHandler
  *
  * NOTICE OF LICENSE
  *
@@ -10,37 +10,38 @@
  *
  * PHP version 5
  *
- * @category  Library
- * @package   TechDivision_StompProtocol
- * @author    Lars Roettig <l.roettig@techdivision.com>
- * @copyright 2014 TechDivision GmbH <info@techdivision.com>
- * @license   http://opensource.org/licenses/osl-3.0.php Open Software License
+ * @category   Library
+ * @package    TechDivision_StompProtocol
+ * @author     Lars Roettig <l.roettig@techdivision.com>
+ * @copyright  2014 TechDivision GmbH <info@techdivision.com>
+ * @license    http://opensource.org/licenses/osl-3.0.php Open Software License
  *            (OSL 3.0)
- * @link      https://github.com/techdivision/TechDivision_StompProtocol
+ * @link       https://github.com/appserver-io/appserver
  */
 
-namespace TechDivision\StompProtocol;
+namespace AppserverIo\Appserver\Stomp;
 
 use Psr\Log\LogLevel;
-use TechDivision\Server\Interfaces\ConnectionHandlerInterface;
-use TechDivision\Server\Interfaces\RequestContextInterface;
-use TechDivision\Server\Interfaces\ServerContextInterface;
-use TechDivision\Server\Interfaces\WorkerInterface;
-use TechDivision\Server\Sockets\SocketInterface;
-use TechDivision\StompProtocol\Exception\StompProtocolException;
-use TechDivision\StompProtocol\Utils\ErrorMessages;
+use AppserverIo\Server\Interfaces\ConnectionHandlerInterface;
+use AppserverIo\Server\Interfaces\ServerContextInterface;
+use AppserverIo\Server\Interfaces\RequestContextInterface;
+use AppserverIo\Server\Interfaces\WorkerInterface;
+use AppserverIo\Psr\Socket\SocketInterface;
+use AppserverIo\Appserver\Stomp\Interfaces\StompProtocolHandlerInterface;
+use AppserverIo\Appserver\Stomp\Exception\StompProtocolException;
+use AppserverIo\Appserver\Stomp\Utils\ErrorMessages;
 
 /**
  * Stomp connection handler
  *
- * @category  Library
- * @package   TechDivision_StompProtocol
- * @author    Lars Roettig <l.roettig@techdivision.com>
- * @copyright 2014 TechDivision GmbH <info@techdivision.com>
- * @license   http://opensource.org/licenses/osl-3.0.php Open Software License
+ * @category   Library
+ * @package    TechDivision_StompProtocol
+ * @author     Lars Roettig <l.roettig@techdivision.com>
+ * @copyright  2014 TechDivision GmbH <info@techdivision.com>
+ * @license    http://opensource.org/licenses/osl-3.0.php Open Software License
  *            (OSL 3.0)
- * @link      https://github.com/techdivision/TechDivision_StompProtocol
- * @link      https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
+ * @link       https://github.com/appserver-io/appserver
+ * @link       https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
 class StompConnectionHandler implements ConnectionHandlerInterface
 {
@@ -62,14 +63,14 @@ class StompConnectionHandler implements ConnectionHandlerInterface
     /**
      * Hold's the request's context instance
      *
-     * @var \TechDivision\Server\Interfaces\RequestContextInterface
+     * @var \AppserverIo\Server\Interfaces\ServerContextInterface
      */
     protected $requestContext;
 
     /**
      * The connection instance
      *
-     * @var \TechDivision\Server\Sockets\SocketInterface
+     * @var  \AppserverIo\Server\Sockets\SocketInterface
      */
     protected $connection;
 
@@ -93,6 +94,13 @@ class StompConnectionHandler implements ConnectionHandlerInterface
      * @var \Psr\Log\LoggerInterface
      */
     protected $logger;
+
+    /**
+     * The handler to handle stomp frames
+     *
+     * @var \AppserverIo\Appserver\Stomp\Interfaces\StompProtocolHandlerInterface
+     */
+    protected $handler;
 
     /**
      * Inits the connection handler by given context and params
@@ -144,10 +152,21 @@ class StompConnectionHandler implements ConnectionHandlerInterface
      *
      * @return void
      */
-    public function injectRequestContext(
-        RequestContextInterface $requestContext
-    ) {
+    public function injectRequestContext(RequestContextInterface $requestContext)
+    {
         $this->requestContext = $requestContext;
+    }
+
+    /**
+     * Injects the stomp handler.
+     *
+     * @param \AppserverIo\Appserver\Stomp\Interfaces\StompProtocolHandlerInterface $handler
+     *
+     * @return void
+     */
+    public function injectStompHandler(StompProtocolHandlerInterface $handler)
+    {
+        $this->handler = $handler;
     }
 
     /**
@@ -195,14 +214,15 @@ class StompConnectionHandler implements ConnectionHandlerInterface
         // add connection ref to self
         $this->connection = $connection;
         $this->worker = $worker;
-        $closeConnection = false;
-        $stompProtocolHandler = new StompProtocolHandler();
+
+        // injects new stomp handler
+        $this->injectStompHandler(new StompProtocolHandler());
 
         do {
 
             try {
 
-
+                // set the command initial to empty string
                 $command = "";
 
                 try {
@@ -240,9 +260,8 @@ class StompConnectionHandler implements ConnectionHandlerInterface
                     $line = rtrim($line, StompFrame::NEWLINE);
 
                     // parse a single stomp header line
-                    $stompParser->parseStompHeaderLine($line);
+                    $stompParser->parseHeaderLine($line);
                 } while (true);
-
 
                 // set the headers for the stomp frame
                 $stompFrame->setHeaders($stompParser->getParsedHeaders());
@@ -259,15 +278,24 @@ class StompConnectionHandler implements ConnectionHandlerInterface
                 //log for frame receive
                 $this->log("FrameReceive", $stompFrame, LogLevel::INFO);
 
-                $response = $stompProtocolHandler->handle($stompFrame);
-
+                // delegate the frame to a handler and write the response in teh stream
+                $this->handler->handle($stompFrame);
+                $response = $this->handler->getResponseStompFrame();
                 if (isset($response)) {
-                    // stomp protocol handler
                     $this->writeFrame($response, $connection);
                 }
-            } catch (StompProtocolException $e) {
-                $response = $stompProtocolHandler->handleError($e);
+
+                // get the state if will the handler close the connection with the client.
+                $closeConnection = $this->handler->getMustConnectionClose();
+
+            } catch (\Exception $e) {
+
+                // set the current exception as error to get the error frame for the stream
+                $this->handler->setErrorState($e->getMessage());
+                $response = $this->handler->getResponseStompFrame();
                 $this->writeFrame($response, $connection);
+
+                // close the connection
                 $closeConnection = true;
             }
         } while ($closeConnection == false);
@@ -297,7 +325,7 @@ class StompConnectionHandler implements ConnectionHandlerInterface
     /**
      * Write a stomp frame
      *
-     * @param \TechDivision\StompProtocol\StompFrame       $stompFrame
+     * @param \AppserverIo\Appserver\Stomp\StompFrame      $stompFrame
      * @param \TechDivision\Server\Sockets\SocketInterface $connection
      *
      * @return void

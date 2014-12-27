@@ -1,6 +1,6 @@
 <?php
 /**
- * TechDivision\StompProtocol\Utils\ClientCommands
+ * AppserverIo\Appserver\Stomp\Utils\ClientCommands
  *
  * NOTICE OF LICENSE
  *
@@ -10,27 +10,28 @@
  *
  * PHP version 5
  *
- * @category  Library
- * @package   TechDivision_StompProtocol
- * @author    Lars Roettig <l.roettig@techdivision.com>
- * @copyright 2014 TechDivision GmbH <info@techdivision.com>
- * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0;
- * @link      https://github.com/techdivision/TechDivision_StompProtocol
+ * @category   Library
+ * @package    TechDivision_StompProtocol
+ * @author     Lars Roettig <l.roettig@techdivision.com>
+ * @copyright  2014 TechDivision GmbH <info@techdivision.com>
+ * @license    http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0;
+ * @link       https://github.com/appserver-io/appserver
  */
 
-namespace TechDivision\StompProtocol\Protocol;
+namespace AppserverIo\Appserver\Stomp\Protocol;
 
 /**
  * Holds the available stomp frame client commands.
  *
- * @category  Library
- * @package   TechDivision_StompProtocol
- * @author    Lars Roettig <l.roettig@techdivision.com>
- * @copyright 2014 TechDivision GmbH <info@techdivision.com>
- * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0;
- * @link      https://github.com/techdivision/TechDivision_StompProtocol
+ * @category   AppserverIo
+ * @package    Appserver
+ * @subpackage Stomp
+ * @author     Lars Roettig <l.roettig@techdivision.com>
+ * @copyright  2014 TechDivision GmbH <info@techdivision.com>
+ * @license    http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0;
+ * @link       https://github.com/appserver-io/appserver
  *
- * @todo      add const documentation
+ * @todo       add const documentation
  */
 class ClientCommands
 {

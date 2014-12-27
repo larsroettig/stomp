@@ -1,6 +1,6 @@
 <?php
 /**
- * \TechDivision\StompProtocol\StompRequest
+ * \AppserverIo\Appserver\Stomp
  *
  * NOTICE OF LICENSE
  *
@@ -10,34 +10,36 @@
  *
  * PHP version 5
  *
- * @category  Library
- * @package   TechDivision_StompProtocol
- * @author    Lars Roettig <l.roettig@techdivision.com>
- * @copyright 2014 TechDivision GmbH <info@techdivision.com>
- * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link      https://github.com/techdivision/TechDivision_StompProtocol
- * @link      https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
+ * @category   AppserverIo
+ * @package    Appserver
+ * @subpackage Stomp
+ * @author     Lars Roettig <l.roettig@techdivision.com>
+ * @copyright  2014 TechDivision GmbH <info@appserver.io>
+ * @license    http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link       https://github.com/appserver-io/appserver
  */
 
-namespace TechDivision\StompProtocol;
+namespace AppserverIo\Appserver\Stomp;
 
-use TechDivision\StompProtocol\Exception\StompProtocolException;
-use TechDivision\StompProtocol\Protocol\CommonValues;
-use TechDivision\StompProtocol\Protocol\Headers;
-use TechDivision\StompProtocol\Utils\ErrorMessages;
+use AppserverIo\Appserver\Stomp\Exception\StompProtocolException;
+use AppserverIo\Appserver\Stomp\Interfaces\StompRequestParserInterface;
+use AppserverIo\Appserver\Stomp\Protocol\CommonValues;
+use AppserverIo\Appserver\Stomp\Protocol\Headers;
+use AppserverIo\Appserver\Stomp\Utils\ErrorMessages;
 
 /**
- * Implementation for a Stomp Request.
+ * Implementation for a StompParser.
  *
- * @category  Library
- * @package   TechDivision_StompProtocol
- * @author    Lars Roettig <l.roettig@techdivision.com>
- * @copyright 2014 TechDivision GmbH <info@techdivision.com>
- * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link      https://github.com/techdivision/TechDivision_StompProtocol
- * @link      https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
+ * @category   AppserverIo
+ * @package    Appserver
+ * @subpackage Stomp
+ * @author     Lars Roettig <l.roettig@techdivision.com>
+ * @copyright  2014 TechDivision GmbH <info@techdivision.com>
+ * @license    http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link       https://github.com/appserver-io/appserver
+ * @link       https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
-class StompParser
+class StompParser implements StompRequestParserInterface
 {
 
     /**
@@ -46,9 +48,11 @@ class StompParser
      * @var array
      */
     protected $keyValidationList;
+
     /**
+     * Holds the parsed headers as key => value array.
      *
-     * @var
+     * @var array
      */
     protected $headers;
 
@@ -58,18 +62,22 @@ class StompParser
     public function __construct()
     {
         $this->setKeyValidationList(array(Headers::CONTENT_LENGTH => "int"));
-        $this->setHeaders(array());
+        $this->headers = array();
     }
 
     /**
-     * @param mixed $headers
+     * Clear the headers to parse new stomp request.
+     *
+     * @return void
      */
-    public function setHeaders($headers)
+    public function clearHeaders()
     {
-        $this->headers = $headers;
+        $this->headers = array();
     }
 
     /**
+     * Returns the parsed headers.
+     *
      * @return array
      */
     public function getParsedHeaders()
@@ -79,52 +87,50 @@ class StompParser
             $this->headers[Headers::ACCEPT_VERSION] = CommonValues::V1_0;
         }
 
+        // returns the parsed stomp headers
         return $this->headers;
     }
 
     /**
      * Parse the stomp frame headers.
      *
-     * @param string                                 $header     The header to parse
-     * @param \TechDivision\StompProtocol\StompFrame $stompFrame The stomp frame to set the header values
+     * @param string $frameHeaders The frame headers
      *
      * @return void
-     *
-     * @throws \TechDivision\StompProtocol\Exception\StompProtocolException
+     * @throws \AppserverIo\Appserver\Stomp\Exception\StompProtocolException
      */
-    public function parseStompHeaders($header)
+    public function parseHeaders($frameHeaders)
     {
         // the parsed headers
         $headers = array();
 
         // get lines by explode header stomp newline
-        $lines = explode(StompFrame::NEWLINE, $header);
+        $lines = explode(StompFrame::NEWLINE, $frameHeaders);
 
         // iterate over all header lines
         foreach ($lines as $line) {
-            $this->parseStompHeaderLine($line, $headers);
+            $this->parseHeaderLine($line, $headers);
         }
     }
 
     /**
-     * Parse a single line from a stomp header
+     * Parse's the given header line
      *
-     * @param string $headerLine The line to parse
-     * @param array  $headers    The header to set the key value pair
+     * @param string $line The line defining a stomp request header
      *
      * @return void
      *
-     * @throws \TechDivision\StompProtocol\Exception\StompProtocolException
+     * @throws \AppserverIo\Appserver\Stomp\Exception\StompProtocolException
      */
-    public function parseStompHeaderLine($headerLine)
+    public function parseHeaderLine($line)
     {
         // checks contains the line a separator
-        if (strpos($headerLine, StompFrame::COLON) === false) {
+        if (strpos($line, StompFrame::COLON) === false) {
             throw new StompProtocolException(ErrorMessages::UNABLE_PARSE_HEADER_LINE);
         }
 
         // explode the line by frame colon
-        list($key, $value) = explode(StompFrame::COLON, $headerLine, 2);
+        list($key, $value) = explode(StompFrame::COLON, $line, 2);
 
         // checks is the header key set
         if (strlen($key) === 0) {
@@ -160,8 +166,8 @@ class StompParser
     protected function decodeHeaderString($string)
     {
         return strtr($string, array(
-            '\\n'  => StompFrame::NEWLINE,
-            '\\c'  => StompFrame::COLON,
+            '\\n' => StompFrame::NEWLINE,
+            '\\c' => StompFrame::COLON,
             '\\\\' => StompFrame::ESCAPE,
         ));
     }
@@ -176,6 +182,7 @@ class StompParser
      */
     protected function validateHeaderValue($key, $value)
     {
+        // loads the validation list
         $keyValidationList = $this->getKeyValidationList();
 
         // checks exist validation for the given key
@@ -188,10 +195,10 @@ class StompParser
         switch ($type) {
             case "int":
                 return ctype_digit($value);
-
-            default:
-                return false;
         }
+
+        // no validation available for the type.
+        return false;
     }
 
     /**

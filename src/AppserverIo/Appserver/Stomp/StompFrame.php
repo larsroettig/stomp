@@ -1,6 +1,6 @@
 <?php
 /**
- * \TechDivision\StompProtocol\StompFrame
+ * \AppserverIo\Appserver\Stomp
  *
  * NOTICE OF LICENSE
  *
@@ -10,31 +10,32 @@
  *
  * PHP version 5
  *
- * @category  Library
- * @package   TechDivision_StompProtocol
- * @author    Lars Roettig <l.roettig@techdivision.com>
- * @copyright 2014 TechDivision GmbH <info@techdivision.com>
- * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link      https://github.com/techdivision/TechDivision_StompProtocol
- * @link      https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
+ * @category   AppserverIo
+ * @package    Appserver
+ * @subpackage Stomp
+ * @author     Lars Roettig <l.roettig@techdivision.com>
+ * @copyright  2014 TechDivision GmbH <info@appserver.io>
+ * @license    http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link       https://github.com/appserver-io/appserver
  */
 
-namespace TechDivision\StompProtocol;
+namespace AppserverIo\Appserver\Stomp;
 
-use TechDivision\StompProtocol\Protocol\CommonValues;
-use TechDivision\StompProtocol\Protocol\Headers;
-use TechDivision\StompProtocol\Protocol\ServerCommands;
+use AppserverIo\Appserver\Stomp\Protocol\CommonValues;
+use AppserverIo\Appserver\Stomp\Protocol\Headers;
+use AppserverIo\Appserver\Stomp\Protocol\ServerCommands;
 
 /**
- * Implementation for a Stomp frame.
+ * Stomp frame implementation
  *
- * @category  Library
- * @package   TechDivision_StompProtocol
- * @author    Lars Roettig <l.roettig@techdivision.com>
- * @copyright 2014 TechDivision GmbH <info@techdivision.com>
- * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link      https://github.com/techdivision/TechDivision_StompProtocol
- * @link      https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
+ * @category   AppserverIo
+ * @package    Appserver
+ * @subpackage Stomp
+ * @author     Lars Roettig <l.roettig@techdivision.com>
+ * @copyright  2014 TechDivision GmbH <info@appserver.io>
+ * @license    http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link       https://github.com/appserver-io/appserver
+ * @link       https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
 class StompFrame
 {
@@ -86,8 +87,6 @@ class StompFrame
      * @param string $command The message command.
      * @param array  $headers The message headers.
      * @param string $body    The message body.
-     *
-     * @return void
      */
     public function __construct($command = null, array $headers = array(), $body = "")
     {
@@ -112,11 +111,15 @@ class StompFrame
      * @param array $headers The headers to set.
      *
      * @return void
+     *
+     * @link http://stomp.github.io/stomp-specification-1.1.html#Repeated_Header_Entries
      */
     public function setHeaders(array $headers)
     {
+        // prevents override all ready set header key
         if (is_array($this->headers)) {
             foreach ($headers as $key => $value) {
+                // set the value for the given header key.
                 $this->setHeaderValueByKey($key, $value);
             }
         } else {
@@ -225,15 +228,17 @@ class StompFrame
      */
     protected function encodeHeaderString($value)
     {
-        // Encode the header if encode header required.
+        // encode the header if encode header required.
         if ($this->getHeaderEncodingRequired()) {
+
             // escape "\n , : , \\" in value
             $value = strtr($value, array(
                 StompFrame::NEWLINE => '\n',
-                StompFrame::COLON   => '\c',
-                StompFrame::ESCAPE  => '\\\\'
+                StompFrame::COLON => '\c',
+                StompFrame::ESCAPE => '\\\\'
             ));
         }
+
         return $value;
     }
 

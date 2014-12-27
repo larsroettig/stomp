@@ -1,6 +1,6 @@
 <?php
 /**
- * \TechDivision\StompProtocol\StompRequestTest
+ * \AppserverIo\Appserver\Stomp\StompParserTest
  *
  * NOTICE OF LICENSE
  *
@@ -15,26 +15,26 @@
  * @author    Lars Roettig <l.roettig@techdivision.com>
  * @copyright 2014 TechDivision GmbH <info@techdivision.com>
  * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link      https://github.com/techdivision/TechDivision_StompProtocol
+ * @link       https://github.com/appserver-io/appserver
  * @link      https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
 
-namespace TechDivision\StompProtocol;
+namespace AppserverIo\Appserver\Stomp;
 
-use TechDivision\StompProtocol\Exception\StompProtocolException;
-use TechDivision\StompProtocol\Protocol\ClientCommands;
-use TechDivision\StompProtocol\Protocol\CommonValues;
-use TechDivision\StompProtocol\Protocol\Headers;
+use AppserverIo\Appserver\Stomp\Exception\StompProtocolException;
+use AppserverIo\Appserver\Stomp\Protocol\ClientCommands;
+use AppserverIo\Appserver\Stomp\Protocol\CommonValues;
+use AppserverIo\Appserver\Stomp\Protocol\Headers;
 
 /**
- * Implementation for a Stomp Request.
+ * Implementation for a Stomp Parser.
  *
  * @category  Library
  * @package   TechDivision_StompProtocol
  * @author    Lars Roettig <l.roettig@techdivision.com>
  * @copyright 2014 TechDivision GmbH <info@techdivision.com>
  * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link      https://github.com/techdivision/TechDivision_StompProtocol
+ * @link       https://github.com/appserver-io/appserver
  * @link      https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
 class StompParserTest extends HelperTestCase
@@ -43,7 +43,7 @@ class StompParserTest extends HelperTestCase
     /**
      * The parserinstance to test.
      *
-     * @var \TechDivision\StompProtocol\StompParser
+     * @var \AppserverIo\Appserver\Stomp\StompParser
      */
     protected $parser;
 
@@ -65,7 +65,7 @@ class StompParserTest extends HelperTestCase
         // header string with duplicate header value
         $header = "accept-version:1.1\nlogin:foo\nlogin:test\npasscode:bar";
 
-        $this->parser->parseStompHeaders($header);
+        $this->parser->parseHeaders($header);
         $headers = $this->parser->getParsedHeaders();
 
         $this->assertEquals(3, count($headers));
@@ -79,7 +79,7 @@ class StompParserTest extends HelperTestCase
     {
         // header string with duplicate header value
         $header = "login:foo\npasscode:bar";
-        $this->parser->parseStompHeaders($header);
+        $this->parser->parseHeaders($header);
         $headers = $this->parser->getParsedHeaders();
 
         $this->assertEquals(3, count($headers));
@@ -88,40 +88,40 @@ class StompParserTest extends HelperTestCase
 
 
     /**
-     * @expectedException \TechDivision\StompProtocol\Exception\StompProtocolException
+     * @expectedException \AppserverIo\Appserver\Stomp\Exception\StompProtocolException
      *
      * @return void
      */
     public function testParseStompHeadersWithOutColon()
     {
         $header = "accept-version1.1\n";
-        $this->parser->parseStompHeaders($header);
+        $this->parser->parseHeaders($header);
     }
 
     /**
-     * @expectedException \TechDivision\StompProtocol\Exception\StompProtocolException
+     * @expectedException \AppserverIo\Appserver\Stomp\Exception\StompProtocolException
      *
      * @return void
      */
     public function testParseStompHeadersWithEmptyKey()
     {
         $header = "accept-version:1.1\nlogin:foo\nlogin:test\n:passcode";
-        $this->parser->parseStompHeaders($header);
+        $this->parser->parseHeaders($header);
     }
 
     /**
-     * @expectedException \TechDivision\StompProtocol\Exception\StompProtocolException
+     * @expectedException \AppserverIo\Appserver\Stomp\Exception\StompProtocolException
      *
      * @return void
      */
     public function testParseStompHeadersWithNotValidContentLength()
     {
         $header = "content-length:aaaaa212w23\n";
-        $this->parser->parseStompHeaders($header);
+        $this->parser->parseHeaders($header);
     }
 
     /**
-     * @expectedException \TechDivision\StompProtocol\Exception\StompProtocolException
+     * @expectedException \AppserverIo\Appserver\Stomp\Exception\StompProtocolException
      *
      * @return void
      */
@@ -129,6 +129,6 @@ class StompParserTest extends HelperTestCase
     {
         $this->parser->setKeyValidationList(array("test" => "foobar"));
         $header = "test:aaaaa212w23\n";
-        $this->parser->parseStompHeaders($header);
+        $this->parser->parseHeaders($header);
     }
 }

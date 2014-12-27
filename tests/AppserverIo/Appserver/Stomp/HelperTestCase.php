@@ -1,7 +1,7 @@
 <?php
 
 /**
- * \TechDivision\StompProtocol\HelperTestCase
+ * \AppserverIo\Appserver\Stomp
  *
  * NOTICE OF LICENSE
  *
@@ -16,11 +16,11 @@
  * @author    Lars Roettig <l.roettig@techdivision.com>
  * @copyright 2014 TechDivision GmbH <info@techdivision.com>
  * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link      https://github.com/techdivision/TechDivision_StompProtocol
+ * @link       https://github.com/appserver-io/appserver
  * @link      https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
 
-namespace TechDivision\StompProtocol;
+namespace AppserverIo\Appserver\Stomp;
 
 /**
  * Helper methods to simplify unit testing.
@@ -30,8 +30,8 @@ namespace TechDivision\StompProtocol;
  * @author    Lars Roettig <l.roettig@techdivision.com>
  * @copyright 2014 TechDivision GmbH <info@techdivision.com>
  * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link      https://github.com/techdivision/TechDivision_StompProtocol
- * @link      https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
+ * @link       https://github.com/appserver-io/appserver
+ * @link      https://github.com/stomp/stomp-specx/blob/master/src/stomp-specification-1.1.md
  */
 class HelperTestCase extends \PHPUnit_Framework_TestCase
 {
