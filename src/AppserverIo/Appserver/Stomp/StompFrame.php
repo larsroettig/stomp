@@ -24,6 +24,7 @@ namespace AppserverIo\Appserver\Stomp;
 use AppserverIo\Appserver\Stomp\Protocol\CommonValues;
 use AppserverIo\Appserver\Stomp\Protocol\Headers;
 use AppserverIo\Appserver\Stomp\Protocol\ServerCommands;
+use AppserverIo\Appserver\Stomp\Interfaces\FrameInterface;
 
 /**
  * Stomp frame implementation
@@ -37,7 +38,7 @@ use AppserverIo\Appserver\Stomp\Protocol\ServerCommands;
  * @link       https://github.com/appserver-io/appserver
  * @link       https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
-class StompFrame
+class StompFrame implements FrameInterface
 {
     /**
      *

@@ -24,7 +24,7 @@ namespace AppserverIo\Appserver\Stomp;
 use AppserverIo\MessageQueueClient\MessageQueue;
 use AppserverIo\MessageQueueClient\QueueConnectionFactory;
 use AppserverIo\Psr\MessageQueueProtocol\Messages\StringMessage;
-use AppserverIo\Appserver\Stomp\Interfaces\Authenticator;
+use AppserverIo\Appserver\Stomp\Interfaces\AuthenticatorInterface;
 use AppserverIo\Appserver\Stomp\Authenticator\SimpleAuthenticator;
 use AppserverIo\Appserver\Stomp\Exception\StompProtocolException;
 use AppserverIo\Appserver\Stomp\Interfaces\StompProtocolHandlerInterface;
@@ -59,7 +59,7 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
     /**
      * Holds the stomp authenticator.
      *
-     * @var \AppserverIo\Appserver\Stomp\Interfaces\Authenticator
+     * @var \AppserverIo\Appserver\Stomp\Interfaces\AuthenticatorInterface
      */
     protected $authenticator;
 
@@ -111,11 +111,11 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
     /**
      * Injects the authenticator for the handler.
      *
-     * @param \AppserverIo\Appserver\Stomp\Interfaces\Authenticator $authenticator The $authenticator
+     * @param \AppserverIo\Appserver\Stomp\Interfaces\AuthenticatorInterface $authenticator The $authenticator
      *
      * @return void
      */
-    public function injectAuthenticator(Authenticator $authenticator)
+    public function injectAuthenticator(AuthenticatorInterface $authenticator)
     {
         $this->authenticator = $authenticator;
     }
@@ -200,7 +200,7 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
     /**
      * Returns the authenticator,
      *
-     * @return \AppserverIo\Appserver\Stomp\Interfaces\Authenticator
+     * @return \AppserverIo\Appserver\Stomp\Interfaces\AuthenticatorInterface
      */
     public function getAuthenticator()
     {

@@ -25,6 +25,7 @@ use AppserverIo\Appserver\Stomp\Exception\StompProtocolException;
 use AppserverIo\Appserver\Stomp\Protocol\ClientCommands;
 use AppserverIo\Appserver\Stomp\Protocol\CommonValues;
 use AppserverIo\Appserver\Stomp\Protocol\Headers;
+use AppserverIo\Appserver\Stomp\Protocol\ServerCommands;
 
 /**
  * Implementation for a Stomp Request.
@@ -54,7 +55,23 @@ class StompFrameTest extends HelperTestCase
      */
     public function setUp()
     {
-        $this->frame = new StompFrame();
+        $this->setFrame(new StompFrame());
+    }
+
+    /**
+     * @return StompFrame
+     */
+    public function getFrame()
+    {
+        return $this->frame;
+    }
+
+    /**
+     * @param StompFrame $frame
+     */
+    public function setFrame($frame)
+    {
+        $this->frame = $frame;
     }
 
     /**
@@ -66,10 +83,10 @@ class StompFrameTest extends HelperTestCase
         $header = array(Headers::LOGIN => "foobar", Headers::PASSCODE => "password");
 
         /// call the method we want test
-        $this->frame->setHeaders($header);
+        $this->getFrame()->setHeaders($header);
 
         // checks the results
-        $this->assertEquals($header, $this->frame->getHeaders());
+        $this->assertEquals($header, $this->getFrame()->getHeaders());
     }
 
     /**
@@ -83,15 +100,41 @@ class StompFrameTest extends HelperTestCase
         $header2 = array(Headers::LOGIN => "tester", Headers::PASSCODE => "password2");
 
         /// call the method we want test
-        $this->frame->setHeaders($header1);
-        $this->frame->setHeaders($header2);
+        $this->getFrame()->setHeaders($header1);
+        $this->getFrame()->setHeaders($header2);
 
         // checks the results
-        $this->assertEquals($header1, $this->frame->getHeaders());
+        $this->assertEquals($header1, $this->getFrame()->getHeaders());
     }
 
+    /**
+     * @return void
+     */
+    public function testFrameToStringWithConnectedFrame()
+    {
+        $this->getFrame()->setCommand(ServerCommands::CONNECTED);
+        $this->getFrame()->setHeaders(array(Headers::HEART_BEAT => "12,20"));
 
+        $frameString = ServerCommands::CONNECTED . "\n".
+            "heart-beat:12,20\n".
+            "\n" ."\x00\n";
 
+        $this->assertEquals( $frameString, (string) $this->getFrame());
+    }
 
+    /**
+     * @return void
+     */
+    public function testFrameToStringWithConnectFrame()
+    {
+        $this->getFrame()->setCommand(ClientCommands::CONNECT);
+        $this->getFrame()->setHeaders(array(Headers::LOGIN => "foobar", Headers::PASSCODE => "password1"));
 
+        $frameString = ClientCommands::CONNECT . "\n" .
+           "login:foobar\n".
+           "passcode:password1\n".
+            "\n" ."\x00\n";
+
+        $this->assertEquals( $frameString, (string) $this->getFrame());
+    }
 }

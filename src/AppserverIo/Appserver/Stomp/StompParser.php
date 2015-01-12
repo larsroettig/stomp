@@ -62,7 +62,7 @@ class StompParser implements StompRequestParserInterface
     public function __construct()
     {
         $this->setKeyValidationList(array(Headers::CONTENT_LENGTH => "int"));
-        $this->headers = array();
+        $this->clearHeaders();
     }
 
     /**

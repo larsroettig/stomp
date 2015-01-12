@@ -38,7 +38,7 @@ class SimpleAuthenticatorTest extends HelperTestCase
 {
 
     /**
-     * @var \AppserverIo\Appserver\Stomp\Interfaces\Authenticator
+     * @var \AppserverIo\Appserver\Stomp\Interfaces\AuthenticatorInterface
      */
     protected $authenticator;
 

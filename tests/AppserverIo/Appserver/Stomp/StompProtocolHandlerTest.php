@@ -61,7 +61,7 @@ class StompProtocolHandlerTest extends HelperTestCase
 
         // init new authenticator mock object
         /** @var \AppserverIo\Appserver\Stomp\Interfaces\Authenticator $authenticator */
-        $authenticator = $this->getMockBuilder('AppserverIo\Appserver\Stomp\Interfaces\Authenticator')->getMock();
+        $authenticator = $this->getMockBuilder('AppserverIo\Appserver\Stomp\Interfaces\AuthenticatorInterface')->getMock();
 
         $authenticator->expects($this->any())
             ->method('connect')
@@ -180,7 +180,7 @@ class StompProtocolHandlerTest extends HelperTestCase
             Headers::ACCEPT_VERSION => "1.0",
         ));
 
-        $authenticator = $this->getMockBuilder('AppserverIo\Appserver\Stomp\Interfaces\Authenticator')->getMock();
+        $authenticator = $this->getMockBuilder('AppserverIo\Appserver\Stomp\Interfaces\AuthenticatorInterface')->getMock();
 
         $authenticator->expects($this->any())
             ->method("getIsAuthenticated")

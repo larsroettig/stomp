@@ -22,7 +22,7 @@
 namespace AppserverIo\Appserver\Stomp\Authenticator;
 
 use AppserverIo\Appserver\Stomp\Exception\StompProtocolException;
-use AppserverIo\Appserver\Stomp\Interfaces\Authenticator;
+use AppserverIo\Appserver\Stomp\Interfaces\AuthenticatorInterface;
 use AppserverIo\Appserver\Stomp\Utils\ErrorMessages;
 
 /**
@@ -37,7 +37,7 @@ use AppserverIo\Appserver\Stomp\Utils\ErrorMessages;
  * @link       https://github.com/appserver-io/appserver
  * @link       https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
-class SimpleAuthenticator implements Authenticator
+class SimpleAuthenticator implements AuthenticatorInterface
 {
     /**
      * Holds the information is the client authenticated.

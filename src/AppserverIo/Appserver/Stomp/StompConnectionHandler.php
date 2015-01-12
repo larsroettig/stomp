@@ -292,7 +292,6 @@ class StompConnectionHandler implements ConnectionHandlerInterface
 
                 // get the state if will the handler close the connection with the client.
                 $closeConnection = $this->getProtocolHandler()->getMustConnectionClose();
-
             } catch (\Exception $e) {
 
                 // set the current exception as error to get the error frame for the stream

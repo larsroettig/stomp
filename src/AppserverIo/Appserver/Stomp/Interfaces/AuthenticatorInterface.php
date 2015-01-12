@@ -1,6 +1,6 @@
 <?php
 /**
- * \AppserverIo\Appserver\Stomp\Authenticator
+ * \AppserverIo\Appserver\Stomp\AuthenticatorInterface
  *
  * NOTICE OF LICENSE
  *
@@ -33,7 +33,7 @@ namespace AppserverIo\Appserver\Stomp\Interfaces;
  * @link       https://github.com/appserver-io/appserver
  * @link       https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
-interface Authenticator
+interface AuthenticatorInterface
 {
     /**
      * Authenticate user by connect command.
