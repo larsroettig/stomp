@@ -283,7 +283,7 @@ class StompConnectionHandler implements ConnectionHandlerInterface
                 //log for frame receive
                 $this->log("FrameReceive", $stompFrame, LogLevel::INFO);
 
-                // delegate the frame to a handler and write the response in teh stream
+                // delegate the frame to a handler and write the response in the stream
                 $this->getProtocolHandler()->handle($stompFrame);
                 $response = $this->getProtocolHandler()->getResponseStompFrame();
                 if (isset($response)) {

@@ -175,7 +175,7 @@ class StompParser implements StompRequestParserInterface
     /**
      * Validates the given header value by given key.
      *
-     * @param string     $key   The key to find teh validation type.
+     * @param string     $key   The key to find the validation type.
      * @param string|int $value The value to validated by type.
      *
      * @return bool
