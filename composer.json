@@ -1,5 +1,5 @@
 {
-  "name": "appserver-io/stompprotocol",
+  "name": "appserver-io/stomp",
   "description": "Stomp protocol implementation (WIP)",
   "homepage": "https://github.com/techdivision/TechDivision_StompProtocol",
   "keywords": [
