@@ -13,12 +13,8 @@
  * @link       https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
 
-namespace AppserverIo\Appserver\Stomp;
+namespace AppserverIo\Stomp;
 
-use AppserverIo\Appserver\Stomp\Interfaces\StompProtocolHandlerInterface;
-use AppserverIo\Appserver\Stomp\StompFrame;
-use AppserverIo\Appserver\Stomp\StompParser;
-use AppserverIo\Appserver\Stomp\StompProtocolHandler;
 use AppserverIo\Server\Dictionaries\EnvVars;
 use AppserverIo\Server\Dictionaries\ModuleHooks;
 use AppserverIo\Server\Dictionaries\ServerVars;
@@ -32,7 +28,12 @@ use AppserverIo\Psr\Socket\SocketReadException;
 use AppserverIo\Psr\Socket\SocketReadTimeoutException;
 use AppserverIo\Psr\Socket\SocketServerException;
 use AppserverIo\Psr\HttpMessage\Protocol;
-use Psr\Log\LogLevel;
+use AppserverIo\Http\HttpRequest;
+use AppserverIo\Http\HttpResponse;
+use AppserverIo\Http\HttpPart;
+use AppserverIo\Http\HttpQueryParser;
+use AppserverIo\Http\HttpRequestParser;
+use AppserverIo\Http\HttpResponseStates;
 
 /**
  * Class StompConnectionHandler
@@ -102,7 +103,7 @@ class StompConnectionHandler implements ConnectionHandlerInterface
     /**
      * Holds the stomp protocol handler.
      *
-     * @var \AppserverIo\Appserver\Stomp\Interfaces\StompProtocolHandlerInterface
+     * @var \AppserverIo\Stomp\Interfaces\StompProtocolHandlerInterface
      */
     protected $protocolHandler;
 
@@ -217,6 +218,8 @@ class StompConnectionHandler implements ConnectionHandlerInterface
         $this->connection = $connection;
         $this->worker = $worker;
 
+
+        return;
         // injects new stomp handler
         $this->injectProtocolHandler(new StompProtocolHandler());
 
@@ -342,7 +345,7 @@ class StompConnectionHandler implements ConnectionHandlerInterface
     /**
      * Returns the protocol handler.
      *
-     * @return \AppserverIo\Appserver\Stomp\Interfaces\StompProtocolHandlerInterface
+     * @return \AppserverIo\Stomp\Interfaces\StompProtocolHandlerInterface
      */
     public function getProtocolHandler()
     {
@@ -352,7 +355,7 @@ class StompConnectionHandler implements ConnectionHandlerInterface
     /**
      * Write a stomp frame
      *
-     * @param \AppserverIo\Appserver\Stomp\StompFrame $stompFrame The stomp frame to write
+     * @param \AppserverIo\Stomp\StompFrame $stompFrame The stomp frame to write
      * @param \AppserverIo\Psr\Socket\SocketInterface $connection The connection to handle
      *
      * @return void

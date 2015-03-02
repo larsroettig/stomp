@@ -1,6 +1,6 @@
 <?php
 /**
- * \AppserverIo\Appserver\Stomp\StompFrameTest
+ * \AppserverIo\Stomp\StompFrameTest
  *
  * NOTICE OF LICENSE
  *
@@ -19,13 +19,13 @@
  * @link      https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
 
-namespace AppserverIo\Appserver\Stomp;
+namespace AppserverIo\Stomp;
 
-use AppserverIo\Appserver\Stomp\Exception\StompProtocolException;
-use AppserverIo\Appserver\Stomp\Protocol\ClientCommands;
-use AppserverIo\Appserver\Stomp\Protocol\CommonValues;
-use AppserverIo\Appserver\Stomp\Protocol\Headers;
-use AppserverIo\Appserver\Stomp\Protocol\ServerCommands;
+use AppserverIo\Stomp\Exception\StompProtocolException;
+use AppserverIo\Stomp\Protocol\ClientCommands;
+use AppserverIo\Stomp\Protocol\CommonValues;
+use AppserverIo\Stomp\Protocol\Headers;
+use AppserverIo\Stomp\Protocol\ServerCommands;
 
 /**
  * Implementation for a Stomp Request.
@@ -44,7 +44,7 @@ class StompFrameTest extends HelperTestCase
     /**
      * The parserinstance to test.
      *
-     * @var \AppserverIo\Appserver\Stomp\StompFrame
+     * @var \AppserverIo\Stomp\StompFrame
      */
     protected $frame;
 

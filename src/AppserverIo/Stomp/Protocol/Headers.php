@@ -1,6 +1,6 @@
 <?php
 /**
- * AppserverIo\Appserver\Stomp\Utils\Headers
+ * AppserverIo\Stomp\Utils\Headers
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * @link       https://github.com/appserver-io/appserver
  */
 
-namespace AppserverIo\Appserver\Stomp\Protocol;
+namespace AppserverIo\Stomp\Protocol;
 
 /**
  * Holds the advisable stomp frame headers.

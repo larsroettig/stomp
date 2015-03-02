@@ -1,6 +1,6 @@
 <?php
 /**
- * AppserverIo\Appserver\Stomp\Utils\ErrorMessages
+ * AppserverIo\Stomp\Utils\ClientCommands
  *
  * NOTICE OF LICENSE
  *
@@ -19,10 +19,10 @@
  * @link       https://github.com/appserver-io/appserver
  */
 
-namespace AppserverIo\Appserver\Stomp\Utils;
+namespace AppserverIo\Stomp\Protocol;
 
 /**
- * Holds the error messages.
+ * Holds the available stomp frame client commands.
  *
  * @category   AppserverIo
  * @package    Appserver
@@ -31,34 +31,63 @@ namespace AppserverIo\Appserver\Stomp\Utils;
  * @copyright  2014 TechDivision GmbH <info@techdivision.com>
  * @license    http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0;
  * @link       https://github.com/appserver-io/appserver
+ *
+ * @todo       add const documentation
  */
-class ErrorMessages
+class ClientCommands
 {
     /**
-     * Error message for failed login.
      *
-     * @var string
      */
-    const FAILED_AUTH = "Failed login while attempting to authenticate user %s";
+    const ABORT = "ABORT";
 
     /**
-     * Error message for validation error.
      *
-     * @var string
      */
-    const HEADER_VALIDATION_ERROR = "Validation error %s is not valid to type: %s";
+    const ACK = "ACK";
 
     /**
-     * Error message for supported protocol versions.
      *
-     * @var string
      */
-    const SUPPORTED_PROTOCOL_VERSIONS = "Supported protocol versions are %s";
+    const BEGIN = "BEGIN";
 
     /**
-     * Error message for unable to parse header line.
      *
-     * @var string
      */
-    const UNABLE_PARSE_HEADER_LINE = "Unable to parse header line.";
+    const COMMIT = "COMMIT";
+
+    /**
+     *
+     */
+    const CONNECT = "CONNECT";
+
+    /**
+     *
+     */
+    const DISCONNECT = "DISCONNECT";
+
+    /**
+     *
+     */
+    const NACK = "NACK";
+
+    /**
+     *
+     */
+    const SEND = "SEND";
+
+    /**
+     *
+     */
+    const STOMP = "STOMP";
+
+    /**
+     *
+     */
+    const SUBSCRIBE = "SUBSCRIBE";
+
+    /**
+     *
+     */
+    const UNSUBSCRIBE = "UNSUBSCRIBE";
 }

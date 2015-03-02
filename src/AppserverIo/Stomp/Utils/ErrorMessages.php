@@ -1,6 +1,6 @@
 <?php
 /**
- * AppserverIo\Appserver\Stomp\Utils\ClientCommands
+ * AppserverIo\Stomp\Utils\ErrorMessages
  *
  * NOTICE OF LICENSE
  *
@@ -19,10 +19,10 @@
  * @link       https://github.com/appserver-io/appserver
  */
 
-namespace AppserverIo\Appserver\Stomp\Protocol;
+namespace AppserverIo\Stomp\Utils;
 
 /**
- * Holds the available stomp frame client commands.
+ * Holds the error messages.
  *
  * @category   AppserverIo
  * @package    Appserver
@@ -31,63 +31,34 @@ namespace AppserverIo\Appserver\Stomp\Protocol;
  * @copyright  2014 TechDivision GmbH <info@techdivision.com>
  * @license    http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0;
  * @link       https://github.com/appserver-io/appserver
- *
- * @todo       add const documentation
  */
-class ClientCommands
+class ErrorMessages
 {
     /**
+     * Error message for failed login.
      *
+     * @var string
      */
-    const ABORT = "ABORT";
+    const FAILED_AUTH = "Failed login while attempting to authenticate user %s";
 
     /**
+     * Error message for validation error.
      *
+     * @var string
      */
-    const ACK = "ACK";
+    const HEADER_VALIDATION_ERROR = "Validation error %s is not valid to type: %s";
 
     /**
+     * Error message for supported protocol versions.
      *
+     * @var string
      */
-    const BEGIN = "BEGIN";
+    const SUPPORTED_PROTOCOL_VERSIONS = "Supported protocol versions are %s";
 
     /**
+     * Error message for unable to parse header line.
      *
+     * @var string
      */
-    const COMMIT = "COMMIT";
-
-    /**
-     *
-     */
-    const CONNECT = "CONNECT";
-
-    /**
-     *
-     */
-    const DISCONNECT = "DISCONNECT";
-
-    /**
-     *
-     */
-    const NACK = "NACK";
-
-    /**
-     *
-     */
-    const SEND = "SEND";
-
-    /**
-     *
-     */
-    const STOMP = "STOMP";
-
-    /**
-     *
-     */
-    const SUBSCRIBE = "SUBSCRIBE";
-
-    /**
-     *
-     */
-    const UNSUBSCRIBE = "UNSUBSCRIBE";
+    const UNABLE_PARSE_HEADER_LINE = "Unable to parse header line.";
 }

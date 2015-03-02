@@ -1,6 +1,6 @@
 <?php
 /**
- * \AppserverIo\Appserver\Stomp\StompProtocolHandler
+ * \AppserverIo\Stomp\StompProtocolHandler
  *
  * NOTICE OF LICENSE
  *
@@ -19,20 +19,20 @@
  * @link       https://github.com/appserver-io/appserver
  */
 
-namespace AppserverIo\Appserver\Stomp;
+namespace AppserverIo\Stomp;
 
 use AppserverIo\MessageQueueClient\MessageQueue;
 use AppserverIo\MessageQueueClient\QueueConnectionFactory;
 use AppserverIo\Psr\MessageQueueProtocol\Messages\StringMessage;
-use AppserverIo\Appserver\Stomp\Interfaces\AuthenticatorInterface;
-use AppserverIo\Appserver\Stomp\Authenticator\SimpleAuthenticator;
-use AppserverIo\Appserver\Stomp\Exception\StompProtocolException;
-use AppserverIo\Appserver\Stomp\Interfaces\StompProtocolHandlerInterface;
-use AppserverIo\Appserver\Stomp\Protocol\ClientCommands;
-use AppserverIo\Appserver\Stomp\Protocol\CommonValues;
-use AppserverIo\Appserver\Stomp\Protocol\Headers;
-use AppserverIo\Appserver\Stomp\Protocol\ServerCommands;
-use AppserverIo\Appserver\Stomp\Utils\ErrorMessages;
+use AppserverIo\Stomp\Interfaces\AuthenticatorInterface;
+use AppserverIo\Stomp\Authenticator\SimpleAuthenticator;
+use AppserverIo\Stomp\Exception\StompProtocolException;
+use AppserverIo\Stomp\Interfaces\StompProtocolHandlerInterface;
+use AppserverIo\Stomp\Protocol\ClientCommands;
+use AppserverIo\Stomp\Protocol\CommonValues;
+use AppserverIo\Stomp\Protocol\Headers;
+use AppserverIo\Stomp\Protocol\ServerCommands;
+use AppserverIo\Stomp\Utils\ErrorMessages;
 
 /**
  * Implementation to handle stomp request.
@@ -59,17 +59,16 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
     /**
      * Holds the stomp authenticator.
      *
-     * @var \AppserverIo\Appserver\Stomp\Interfaces\AuthenticatorInterface
+     * @var \AppserverIo\Stomp\Interfaces\AuthenticatorInterface
      */
     protected $authenticator;
 
     /**
      * Holds the response as stomp frame.
      *
-     * @var \AppserverIo\Appserver\Stomp\StompFrame
+     * @var \AppserverIo\Stomp\StompFrame
      */
     protected $response;
-
 
     /**
      * Holds the state to close parent connection.
@@ -111,7 +110,7 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
     /**
      * Injects the authenticator for the handler.
      *
-     * @param \AppserverIo\Appserver\Stomp\Interfaces\AuthenticatorInterface $authenticator The $authenticator
+     * @param \AppserverIo\Stomp\Interfaces\AuthenticatorInterface $authenticator The $authenticator
      *
      * @return void
      */
@@ -133,11 +132,11 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
     /**
      * Handle the connect request.
      *
-     * @param \AppserverIo\Appserver\Stomp\StompFrame $stompFrame The Stomp frame to handle the connect.
+     * @param \AppserverIo\Stomp\StompFrame $stompFrame The Stomp frame to handle the connect.
      *
      * @return void
      *
-     * throws \AppserverIo\Appserver\Stomp\Exception\StompProtocolException
+     * throws \AppserverIo\Stomp\Exception\StompProtocolException
      */
     public function handle(StompFrame $stompFrame)
     {
@@ -161,11 +160,11 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
     /**
      * Handle the connect request.
      *
-     * @param \AppserverIo\Appserver\Stomp\StompFrame $stompFrame The Stomp frame to handle the connect.
+     * @param \AppserverIo\Stomp\StompFrame $stompFrame The Stomp frame to handle the connect.
      *
-     * @return \AppserverIo\Appserver\Stomp\StompFrame The stomp frame Response
+     * @return \AppserverIo\Stomp\StompFrame The stomp frame Response
      *
-     * @throws \AppserverIo\Appserver\Stomp\Exception\StompProtocolException
+     * @throws \AppserverIo\Stomp\Exception\StompProtocolException
      */
     protected function handleConnect(StompFrame $stompFrame)
     {
@@ -200,7 +199,7 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
     /**
      * Returns the authenticator,
      *
-     * @return \AppserverIo\Appserver\Stomp\Interfaces\AuthenticatorInterface
+     * @return \AppserverIo\Stomp\Interfaces\AuthenticatorInterface
      */
     public function getAuthenticator()
     {
@@ -232,11 +231,11 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
     /**
      * Handle the send request.
      *
-     * @param \AppserverIo\Appserver\Stomp\StompFrame $stompFrame The Stomp frame to handle the connect.
+     * @param \AppserverIo\Stomp\StompFrame $stompFrame The Stomp frame to handle the connect.
      *
      * @return void
      *
-     * @throws \AppserverIo\Appserver\Stomp\Exception\StompProtocolException
+     * @throws \AppserverIo\Stomp\Exception\StompProtocolException
      */
     protected function handleSend(StompFrame $stompFrame)
     {
@@ -261,7 +260,7 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
     /**
      * Handle the disconnect request.
      *
-     * @return \AppserverIo\Appserver\Stomp\StompFrame The stomp frame Response
+     * @return \AppserverIo\Stomp\StompFrame The stomp frame Response
      */
     protected function handleDisConnect()
     {
@@ -274,7 +273,7 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
     /**
      * Returns the response stomp frame.
      *
-     * @return \AppserverIo\Appserver\Stomp\StompFrame
+     * @return \AppserverIo\Stomp\StompFrame
      */
     public function getResponseStompFrame()
     {
@@ -300,7 +299,7 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
      * @param string $message The message to set
      * @param array  $headers The headers to set
      *
-     * @return \AppserverIo\Appserver\Stomp\StompFrame
+     * @return \AppserverIo\Stomp\StompFrame
      */
     protected function handleError($message, array $headers = array())
     {

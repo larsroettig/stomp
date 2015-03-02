@@ -1,6 +1,6 @@
 <?php
 /**
- * \AppserverIo\Appserver\Stomp\StompProtocolHandlerTest
+ * \AppserverIo\Stomp\StompProtocolHandlerTest
  *
  * NOTICE OF LICENSE
  *
@@ -19,15 +19,15 @@
  * @link       https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
 
-namespace AppserverIo\Appserver\Stomp;
+namespace AppserverIo\Stomp;
 
 use AppserverIo\MessageQueueClient\QueueSender;
 use PDepend\TextUI\Command;
-use AppserverIo\Appserver\Stomp\Exception\StompProtocolException;
-use AppserverIo\Appserver\Stomp\Protocol\ClientCommands;
-use AppserverIo\Appserver\Stomp\Protocol\CommonValues;
-use AppserverIo\Appserver\Stomp\Protocol\Headers;
-use AppserverIo\Appserver\Stomp\Protocol\ServerCommands;
+use AppserverIo\Stomp\Exception\StompProtocolException;
+use AppserverIo\Stomp\Protocol\ClientCommands;
+use AppserverIo\Stomp\Protocol\CommonValues;
+use AppserverIo\Stomp\Protocol\Headers;
+use AppserverIo\Stomp\Protocol\ServerCommands;
 
 
 /**
@@ -45,7 +45,7 @@ class StompProtocolHandlerTest extends HelperTestCase
 {
 
     /**
-     * @var \AppserverIo\Appserver\Stomp\StompProtocolHandler
+     * @var \AppserverIo\Stomp\StompProtocolHandler
      */
     protected $handler;
 
@@ -60,8 +60,8 @@ class StompProtocolHandlerTest extends HelperTestCase
         $this->handler = new StompProtocolHandler();
 
         // init new authenticator mock object
-        /** @var \AppserverIo\Appserver\Stomp\Interfaces\Authenticator $authenticator */
-        $authenticator = $this->getMockBuilder('AppserverIo\Appserver\Stomp\Interfaces\AuthenticatorInterface')->getMock();
+        /** @var \AppserverIo\Stomp\Interfaces\Authenticator $authenticator */
+        $authenticator = $this->getMockBuilder('AppserverIo\Stomp\Interfaces\AuthenticatorInterface')->getMock();
 
         $authenticator->expects($this->any())
             ->method('connect')
@@ -104,7 +104,7 @@ class StompProtocolHandlerTest extends HelperTestCase
     }
 
     /**
-     * @expectedException \AppserverIo\Appserver\Stomp\Exception\StompProtocolException
+     * @expectedException \AppserverIo\Stomp\Exception\StompProtocolException
      *
      *
      * @return void
@@ -122,7 +122,7 @@ class StompProtocolHandlerTest extends HelperTestCase
 
 
     /**
-     * @expectedException \AppserverIo\Appserver\Stomp\Exception\StompProtocolException
+     * @expectedException \AppserverIo\Stomp\Exception\StompProtocolException
      *
      * @return void
      */
@@ -171,7 +171,7 @@ class StompProtocolHandlerTest extends HelperTestCase
     }
 
     /**
-     * @expectedException \AppserverIo\Appserver\Stomp\Exception\StompProtocolException
+     * @expectedException \AppserverIo\Stomp\Exception\StompProtocolException
      */
     public function testHandleSendNotAuthenticated()
     {
@@ -180,7 +180,7 @@ class StompProtocolHandlerTest extends HelperTestCase
             Headers::ACCEPT_VERSION => "1.0",
         ));
 
-        $authenticator = $this->getMockBuilder('AppserverIo\Appserver\Stomp\Interfaces\AuthenticatorInterface')->getMock();
+        $authenticator = $this->getMockBuilder('AppserverIo\Stomp\Interfaces\AuthenticatorInterface')->getMock();
 
         $authenticator->expects($this->any())
             ->method("getIsAuthenticated")

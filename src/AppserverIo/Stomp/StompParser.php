@@ -1,6 +1,6 @@
 <?php
 /**
- * \AppserverIo\Appserver\Stomp
+ * \AppserverIo\Stomp
  *
  * NOTICE OF LICENSE
  *
@@ -19,13 +19,13 @@
  * @link       https://github.com/appserver-io/appserver
  */
 
-namespace AppserverIo\Appserver\Stomp;
+namespace AppserverIo\Stomp;
 
-use AppserverIo\Appserver\Stomp\Exception\StompProtocolException;
-use AppserverIo\Appserver\Stomp\Interfaces\StompRequestParserInterface;
-use AppserverIo\Appserver\Stomp\Protocol\CommonValues;
-use AppserverIo\Appserver\Stomp\Protocol\Headers;
-use AppserverIo\Appserver\Stomp\Utils\ErrorMessages;
+use AppserverIo\Stomp\Exception\StompProtocolException;
+use AppserverIo\Stomp\Interfaces\StompRequestParserInterface;
+use AppserverIo\Stomp\Protocol\CommonValues;
+use AppserverIo\Stomp\Protocol\Headers;
+use AppserverIo\Stomp\Utils\ErrorMessages;
 
 /**
  * Implementation for a StompParser.
@@ -97,7 +97,7 @@ class StompParser implements StompRequestParserInterface
      * @param string $frameHeaders The frame headers
      *
      * @return void
-     * @throws \AppserverIo\Appserver\Stomp\Exception\StompProtocolException
+     * @throws \AppserverIo\Stomp\Exception\StompProtocolException
      */
     public function parseHeaders($frameHeaders)
     {
@@ -120,7 +120,7 @@ class StompParser implements StompRequestParserInterface
      *
      * @return void
      *
-     * @throws \AppserverIo\Appserver\Stomp\Exception\StompProtocolException
+     * @throws \AppserverIo\Stomp\Exception\StompProtocolException
      */
     public function parseHeaderLine($line)
     {

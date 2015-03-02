@@ -1,6 +1,6 @@
 <?php
 /**
- * \AppserverIo\Appserver\Stomp\FrameInterface
+ * \AppserverIo\Stomp\CommonValues
  *
  * NOTICE OF LICENSE
  *
@@ -19,10 +19,10 @@
  * @link       https://github.com/appserver-io/appserver
  */
 
-namespace AppserverIo\Appserver\Stomp\Interfaces;
+namespace AppserverIo\Stomp\Protocol;
 
 /**
- * Stomp protocol authenticator interface
+ * Holds the common values.
  *
  * @category   AppserverIo
  * @package    Appserver
@@ -31,17 +31,41 @@ namespace AppserverIo\Appserver\Stomp\Interfaces;
  * @copyright  2014 TechDivision GmbH <info@techdivision.com>
  * @license    http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link       https://github.com/appserver-io/appserver
- * @link       https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
-
-interface FrameInterface
+class CommonValues
 {
+    /**
+     * Holds the server name
+     *
+     * @var string
+     */
+    const SERVER_NAME = "Appserver.io Mq Stomp V0.1";
 
     /**
-     * Returns the frame object as string.
+     * Defines the Stomp protocol 1.0 version identifier
      *
-     * @return string
+     * @var string
      */
-    public function __toString();
+    const V1_0 = "1.0";
 
+    /**
+     * Defines the Stomp protocol 1.1 version identifier
+     *
+     * @var string
+     */
+    const V1_1 = "1.1";
+
+    /**
+     * Defines the Stomp protocol 1.2 version identifier
+     *
+     * @var string
+     */
+    const V1_2 = "1.2";
+
+    /**
+     * Defines text plain type for the stomp body.
+     *
+     * @var string
+     */
+    const TEXT_PLAIN = "text/plain";
 }

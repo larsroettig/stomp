@@ -1,6 +1,6 @@
 <?php
 /**
- * \AppserverIo\Appserver\Stomp\Authenticator
+ * \AppserverIo\Stomp\Authenticator
  *
  * NOTICE OF LICENSE
  *
@@ -19,11 +19,11 @@
  * @link       https://github.com/appserver-io/appserver
  */
 
-namespace AppserverIo\Appserver\Stomp\Authenticator;
+namespace AppserverIo\Stomp\Authenticator;
 
-use AppserverIo\Appserver\Stomp\Exception\StompProtocolException;
-use AppserverIo\Appserver\Stomp\Interfaces\AuthenticatorInterface;
-use AppserverIo\Appserver\Stomp\Utils\ErrorMessages;
+use AppserverIo\Stomp\Exception\StompProtocolException;
+use AppserverIo\Stomp\Interfaces\AuthenticatorInterface;
+use AppserverIo\Stomp\Utils\ErrorMessages;
 
 /**
  * Stomp protocol authenticator class.

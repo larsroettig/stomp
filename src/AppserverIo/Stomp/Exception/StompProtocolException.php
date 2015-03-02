@@ -1,6 +1,6 @@
 <?php
 /**
- * AppserverIo\Appserver\Stomp\Interfaces\StompRequestParserInterface
+ * \AppserverIo\Stomp\Exception\StompProtocolException
  *
  * NOTICE OF LICENSE
  *
@@ -19,10 +19,11 @@
  * @link       https://github.com/appserver-io/appserver
  * @link       https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
-namespace AppserverIo\Appserver\Stomp\Interfaces;
+
+namespace AppserverIo\Stomp\Exception;
 
 /**
- * Interface for a stomp request parser class.
+ * Implementation for a Stomp exception.
  *
  * @category   AppserverIo
  * @package    Appserver
@@ -33,42 +34,6 @@ namespace AppserverIo\Appserver\Stomp\Interfaces;
  * @link       https://github.com/appserver-io/appserver
  * @link       https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
-interface StompRequestParserInterface
+class StompProtocolException extends \Exception
 {
-
-    /**
-     * Returns the parsed stomp headers.
-     *
-     * @return array
-     */
-    public function getParsedHeaders();
-
-    /**
-     * Parse's the given header line
-     *
-     * @param string $line The line defining a stomp request header
-     *
-     * @return void
-     *
-     * @throws \AppserverIo\Appserver\Stomp\Exception\StompProtocolException
-     */
-    public function parseHeaderLine($line);
-
-    /**
-     * Parse the stomp frame headers.
-     *
-     * @param string $frameHeaders The frame headers
-     *
-     * @return void
-     *
-     * @throws \AppserverIo\Appserver\Stomp\Exception\StompProtocolException
-     */
-    public function parseHeaders($frameHeaders);
-
-    /**
-     * Clear the headers to parse new stomp request.
-     *
-     * @return void
-     */
-    public function clearHeaders();
 }

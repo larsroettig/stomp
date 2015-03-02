@@ -1,7 +1,7 @@
 <?php
 
 /**
- * \AppserverIo\Appserver\Stomp
+ * \AppserverIo\Stomp
  *
  * NOTICE OF LICENSE
  *
@@ -20,7 +20,7 @@
  * @link      https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
 
-namespace AppserverIo\Appserver\Stomp;
+namespace AppserverIo\Stomp;
 
 /**
  * Helper methods to simplify unit testing.

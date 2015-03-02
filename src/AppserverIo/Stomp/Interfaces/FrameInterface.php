@@ -1,6 +1,6 @@
 <?php
 /**
- * \AppserverIo\Appserver\Stomp\AuthenticatorInterface
+ * \AppserverIo\Stomp\FrameInterface
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * @link       https://github.com/appserver-io/appserver
  */
 
-namespace AppserverIo\Appserver\Stomp\Interfaces;
+namespace AppserverIo\Stomp\Interfaces;
 
 /**
  * Stomp protocol authenticator interface
@@ -33,22 +33,15 @@ namespace AppserverIo\Appserver\Stomp\Interfaces;
  * @link       https://github.com/appserver-io/appserver
  * @link       https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
-interface AuthenticatorInterface
+
+interface FrameInterface
 {
-    /**
-     * Authenticate user by connect command.
-     *
-     * @param string $login    The login name
-     * @param string $passCode The password
-     *
-     * @return string token which will be used for authorization requests.
-     */
-    public function connect($login, $passCode);
 
     /**
-     * Returns is authenticated user.
+     * Returns the frame object as string.
      *
-     * @return bool
+     * @return string
      */
-    public function getIsAuthenticated();
+    public function __toString();
+
 }

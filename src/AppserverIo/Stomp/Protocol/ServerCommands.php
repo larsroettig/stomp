@@ -1,6 +1,6 @@
 <?php
 /**
- * \AppserverIo\Appserver\Stomp\Utils\ServerCommands
+ * \AppserverIo\Stomp\Utils\ServerCommands
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * @link       https://github.com/appserver-io/appserver
  */
 
-namespace AppserverIo\Appserver\Stomp\Protocol;
+namespace AppserverIo\Stomp\Protocol;
 
 /**
  * Holds the available stomp frame server commands.

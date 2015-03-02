@@ -1,6 +1,6 @@
 <?php
 /**
- * \AppserverIo\Appserver\Stomp\SimpleAuthenticatorTest
+ * \AppserverIo\Stomp\SimpleAuthenticatorTest
  *
  * NOTICE OF LICENSE
  *
@@ -18,10 +18,10 @@
  * @link       https://github.com/appserver-io/appserver
  */
 
-namespace AppserverIo\Appserver\Stomp\Authenticator;
+namespace AppserverIo\Stomp\Authenticator;
 
 
-use AppserverIo\Appserver\Stomp\HelperTestCase;
+use AppserverIo\Stomp\HelperTestCase;
 
 /**
  * Stomp protocol authenticator class.
@@ -38,7 +38,7 @@ class SimpleAuthenticatorTest extends HelperTestCase
 {
 
     /**
-     * @var \AppserverIo\Appserver\Stomp\Interfaces\AuthenticatorInterface
+     * @var \AppserverIo\Stomp\Interfaces\AuthenticatorInterface
      */
     protected $authenticator;
 
@@ -64,7 +64,7 @@ class SimpleAuthenticatorTest extends HelperTestCase
     }
 
     /**
-     * @expectedException \AppserverIo\Appserver\Stomp\Exception\StompProtocolException
+     * @expectedException \AppserverIo\Stomp\Exception\StompProtocolException
      *
      * @return void
      */

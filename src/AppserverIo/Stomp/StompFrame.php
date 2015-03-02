@@ -1,6 +1,6 @@
 <?php
 /**
- * \AppserverIo\Appserver\Stomp
+ * \AppserverIo\Stomp
  *
  * NOTICE OF LICENSE
  *
@@ -19,12 +19,12 @@
  * @link       https://github.com/appserver-io/appserver
  */
 
-namespace AppserverIo\Appserver\Stomp;
+namespace AppserverIo\Stomp;
 
-use AppserverIo\Appserver\Stomp\Protocol\CommonValues;
-use AppserverIo\Appserver\Stomp\Protocol\Headers;
-use AppserverIo\Appserver\Stomp\Protocol\ServerCommands;
-use AppserverIo\Appserver\Stomp\Interfaces\FrameInterface;
+use AppserverIo\Stomp\Protocol\CommonValues;
+use AppserverIo\Stomp\Protocol\Headers;
+use AppserverIo\Stomp\Protocol\ServerCommands;
+use AppserverIo\Stomp\Interfaces\FrameInterface;
 
 /**
  * Stomp frame implementation

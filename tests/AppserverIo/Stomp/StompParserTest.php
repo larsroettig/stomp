@@ -1,6 +1,6 @@
 <?php
 /**
- * \AppserverIo\Appserver\Stomp\StompParserTest
+ * \AppserverIo\Stomp\StompParserTest
  *
  * NOTICE OF LICENSE
  *
@@ -19,12 +19,12 @@
  * @link      https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
 
-namespace AppserverIo\Appserver\Stomp;
+namespace AppserverIo\Stomp;
 
-use AppserverIo\Appserver\Stomp\Exception\StompProtocolException;
-use AppserverIo\Appserver\Stomp\Protocol\ClientCommands;
-use AppserverIo\Appserver\Stomp\Protocol\CommonValues;
-use AppserverIo\Appserver\Stomp\Protocol\Headers;
+use AppserverIo\Stomp\Exception\StompProtocolException;
+use AppserverIo\Stomp\Protocol\ClientCommands;
+use AppserverIo\Stomp\Protocol\CommonValues;
+use AppserverIo\Stomp\Protocol\Headers;
 
 /**
  * Implementation for a Stomp Parser.
@@ -43,7 +43,7 @@ class StompParserTest extends HelperTestCase
     /**
      * The parserinstance to test.
      *
-     * @var \AppserverIo\Appserver\Stomp\StompParser
+     * @var \AppserverIo\Stomp\StompParser
      */
     protected $parser;
 
@@ -88,7 +88,7 @@ class StompParserTest extends HelperTestCase
 
 
     /**
-     * @expectedException \AppserverIo\Appserver\Stomp\Exception\StompProtocolException
+     * @expectedException \AppserverIo\Stomp\Exception\StompProtocolException
      *
      * @return void
      */
@@ -99,7 +99,7 @@ class StompParserTest extends HelperTestCase
     }
 
     /**
-     * @expectedException \AppserverIo\Appserver\Stomp\Exception\StompProtocolException
+     * @expectedException \AppserverIo\Stomp\Exception\StompProtocolException
      *
      * @return void
      */
@@ -110,7 +110,7 @@ class StompParserTest extends HelperTestCase
     }
 
     /**
-     * @expectedException \AppserverIo\Appserver\Stomp\Exception\StompProtocolException
+     * @expectedException \AppserverIo\Stomp\Exception\StompProtocolException
      *
      * @return void
      */
@@ -121,7 +121,7 @@ class StompParserTest extends HelperTestCase
     }
 
     /**
-     * @expectedException \AppserverIo\Appserver\Stomp\Exception\StompProtocolException
+     * @expectedException \AppserverIo\Stomp\Exception\StompProtocolException
      *
      * @return void
      */

@@ -1,6 +1,6 @@
 <?php
 /**
- * \AppserverIo\Appserver\Stomp\Exception\StompProtocolException
+ * AppserverIo\Stomp\Interfaces\StompProtocolHandlerInterface
  *
  * NOTICE OF LICENSE
  *
@@ -19,11 +19,12 @@
  * @link       https://github.com/appserver-io/appserver
  * @link       https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
+namespace AppserverIo\Stomp\Interfaces;
 
-namespace AppserverIo\Appserver\Stomp\Exception;
+use AppserverIo\Stomp\StompFrame;
 
 /**
- * Implementation for a Stomp exception.
+ * Interface for a stomp protocol handler class.
  *
  * @category   AppserverIo
  * @package    Appserver
@@ -34,6 +35,40 @@ namespace AppserverIo\Appserver\Stomp\Exception;
  * @link       https://github.com/appserver-io/appserver
  * @link       https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
-class StompProtocolException extends \Exception
+interface StompProtocolHandlerInterface
 {
+
+    /**
+     * Handles a stomp frame.
+     *
+     * @param \AppserverIo\Stomp\StompFrame $stompFrame the stomp frame to handle.
+     *
+     * @return void
+     */
+    public function handle(StompFrame $stompFrame);
+
+
+    /**
+     * Returns the response stomp frame.
+     *
+     * @return \AppserverIo\Stomp\StompFrame
+     */
+    public function getResponseStompFrame();
+
+    /**
+     * Sets the state from handler to error.
+     *
+     * @param string $message the message to set for the error frame.
+     * @param array  $headers headers to set to error frame.
+     *
+     * @return mixed
+     */
+    public function setErrorState($message, $headers);
+
+    /**
+     * Returns must the parent handler the connection close
+     *
+     * @return bool
+     */
+    public function getMustConnectionClose();
 }

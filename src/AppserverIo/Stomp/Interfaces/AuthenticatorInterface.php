@@ -1,6 +1,6 @@
 <?php
 /**
- * \AppserverIo\Appserver\Stomp\CommonValues
+ * \AppserverIo\Stomp\AuthenticatorInterface
  *
  * NOTICE OF LICENSE
  *
@@ -19,10 +19,10 @@
  * @link       https://github.com/appserver-io/appserver
  */
 
-namespace AppserverIo\Appserver\Stomp\Protocol;
+namespace AppserverIo\Stomp\Interfaces;
 
 /**
- * Holds the common values.
+ * Stomp protocol authenticator interface
  *
  * @category   AppserverIo
  * @package    Appserver
@@ -31,41 +31,24 @@ namespace AppserverIo\Appserver\Stomp\Protocol;
  * @copyright  2014 TechDivision GmbH <info@techdivision.com>
  * @license    http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link       https://github.com/appserver-io/appserver
+ * @link       https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
-class CommonValues
+interface AuthenticatorInterface
 {
     /**
-     * Holds the server name
+     * Authenticate user by connect command.
      *
-     * @var string
+     * @param string $login    The login name
+     * @param string $passCode The password
+     *
+     * @return string token which will be used for authorization requests.
      */
-    const SERVER_NAME = "Appserver.io Mq Stomp V0.1";
+    public function connect($login, $passCode);
 
     /**
-     * Defines the Stomp protocol 1.0 version identifier
+     * Returns is authenticated user.
      *
-     * @var string
+     * @return bool
      */
-    const V1_0 = "1.0";
-
-    /**
-     * Defines the Stomp protocol 1.1 version identifier
-     *
-     * @var string
-     */
-    const V1_1 = "1.1";
-
-    /**
-     * Defines the Stomp protocol 1.2 version identifier
-     *
-     * @var string
-     */
-    const V1_2 = "1.2";
-
-    /**
-     * Defines text plain type for the stomp body.
-     *
-     * @var string
-     */
-    const TEXT_PLAIN = "text/plain";
+    public function getIsAuthenticated();
 }

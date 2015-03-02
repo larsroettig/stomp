@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
-<project name="techdivision/stompprotocol" default="deploy" basedir=".">
+<!DOCTYPE project>
+<project name="appserver-io/stomp" default="composer-init" basedir=".">
+
     <!-- initialize ENV variable -->
     <property environment="env" />
 
