@@ -1,29 +1,3 @@
-Appserver.io Message Queue StompProtocol Adapter
-==============================================================================
-
-Can receive stomp messages and will send it to "Appserver.io message Queue".
-
-### Installation Mac
-
-* Clone repository or Download the ZIP
-* Add the followings lines to /opt/appserver/composer.json
-
-```json
-    "repositories": [
-        {
-            "type":"vcs",
-            "url":"/YOUR/PATH/stomp"
-        }
-    ],
-    "require": {
-    "appserver-io/stomp" : "dev-master"
-    }
-```
-
-* Run the command "sudo bin/php bin/composer.phar update" in /opt/appserver
-* Add the new server node to /opt/appserver/etc/appserver/appserver.xml  
-
-```xml
 <server
         name="stomp"
         type="\AppserverIo\Server\Servers\MultiThreadedServer"
@@ -67,16 +41,5 @@ Can receive stomp messages and will send it to "Appserver.io message Queue".
 
     <!-- include of virtual host configurations -->
     <xi:include href="conf.d/virtual-hosts.xml"/>
+
 </server>
-```
-
-* Restart the Apserver
-
-TODO
-==========
-
-* Better documentation 
-* Example(tutorial)
- 
-
-
