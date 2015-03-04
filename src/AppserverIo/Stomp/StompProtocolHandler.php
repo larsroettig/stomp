@@ -21,9 +21,9 @@
 
 namespace AppserverIo\Stomp;
 
-use AppserverIo\MessageQueueClient\MessageQueue;
-use AppserverIo\MessageQueueClient\QueueConnectionFactory;
-use AppserverIo\Psr\MessageQueueProtocol\Messages\StringMessage;
+use AppserverIo\Messaging\MessageQueue;
+use AppserverIo\Messaging\QueueConnectionFactory;
+use AppserverIo\Messaging\StringMessage;
 use AppserverIo\Stomp\Interfaces\AuthenticatorInterface;
 use AppserverIo\Stomp\Authenticator\SimpleAuthenticator;
 use AppserverIo\Stomp\Exception\StompProtocolException;
@@ -80,7 +80,7 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
     /**
      * Holds the queue session.
      *
-     * @var \AppserverIo\MessageQueueClient\QueueSession
+     * @var \AppserverIo\Messaging\QueueSession
      */
     protected $session;
 
@@ -186,11 +186,8 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
 
         // create new stomp CONNECTED frame with headers and return
         $command = ServerCommands::CONNECTED;
-        $headers = array(
-            Headers::SESSION => $this->getSession()->getId(),
-            Headers::VERSION => $protocolVersion,
-            Headers::SERVER => CommonValues::SERVER_NAME
-        );
+        $headers = array(Headers::SESSION => $this->getSession()->getId(), Headers::VERSION => $protocolVersion,
+                         Headers::SERVER  => CommonValues::SERVER_NAME);
 
         // returns the response frame
         return new StompFrame($command, $headers);
@@ -209,7 +206,7 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
     /**
      * Returns the message queue session.
      *
-     * @return \AppserverIo\MessageQueueClient\QueueSession
+     * @return \AppserverIo\Messaging\QueueSession
      */
     public function getSession()
     {
@@ -219,7 +216,7 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
     /**
      * Set the message queue session.
      *
-     * @param \AppserverIo\MessageQueueClient\QueueSession $session The  message queue session to set.
+     * @param \AppserverIo\Messaging\QueueSession $session The  message queue session to set.
      *
      * @return void
      */

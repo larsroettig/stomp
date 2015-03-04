@@ -21,7 +21,7 @@
 
 namespace AppserverIo\Stomp;
 
-use AppserverIo\MessageQueueClient\QueueSender;
+use AppserverIo\Messaging\QueueSender;
 use PDepend\TextUI\Command;
 use AppserverIo\Stomp\Exception\StompProtocolException;
 use AppserverIo\Stomp\Protocol\ClientCommands;
@@ -203,14 +203,13 @@ class StompProtocolHandlerTest extends HelperTestCase
             Headers::ACCEPT_VERSION => "1.0",
         ));
 
-
         $stompFrame->setBody("bar foo 1234");
 
-        $stubQueueSession = $this->getMockBuilder('AppserverIo\MessageQueueClient\QueueSession')
+        $stubQueueSession = $this->getMockBuilder('AppserverIo\Messaging\QueueSession')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $stubQueueSender = $this->getMockBuilder('AppserverIo\MessageQueueClient\QueueSender')
+        $stubQueueSender = $this->getMockBuilder('AppserverIo\Messaging\QueueSender')
             ->disableOriginalConstructor()
             ->getMock();
 

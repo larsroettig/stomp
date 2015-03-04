@@ -34,6 +34,7 @@ use AppserverIo\Http\HttpPart;
 use AppserverIo\Http\HttpQueryParser;
 use AppserverIo\Http\HttpRequestParser;
 use AppserverIo\Http\HttpResponseStates;
+use AppserverIo\Stomp\Interfaces\StompProtocolHandlerInterface;
 
 /**
  * Class StompConnectionHandler
@@ -218,8 +219,6 @@ class StompConnectionHandler implements ConnectionHandlerInterface
         $this->connection = $connection;
         $this->worker = $worker;
 
-
-        return;
         // injects new stomp handler
         $this->injectProtocolHandler(new StompProtocolHandler());
 
