@@ -35,6 +35,7 @@ use AppserverIo\Http\HttpQueryParser;
 use AppserverIo\Http\HttpRequestParser;
 use AppserverIo\Http\HttpResponseStates;
 use AppserverIo\Stomp\Interfaces\StompProtocolHandlerInterface;
+use Psr\Log\LogLevel;
 
 /**
  * Class StompConnectionHandler
