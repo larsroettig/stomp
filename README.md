@@ -1,6 +1,8 @@
 Appserver.io Message Queue StompProtocol Adapter
 ==============================================================================
 
+[![Join the chat at https://gitter.im/larsroettig/Stomp](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/larsroettig/Stomp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Can receive stomp messages and will send it to "Appserver.io message Queue".
 
 ### Installation Mac
