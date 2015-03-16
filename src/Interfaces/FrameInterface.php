@@ -36,6 +36,41 @@ namespace AppserverIo\Stomp\Interfaces;
 
 interface FrameInterface
 {
+    /**
+     * Set the headers.
+     *
+     * @param array $headers The headers to set.
+     *
+     * @return void
+     *
+     * @link http://stomp.github.io/stomp-specification-1.1.html#Repeated_Header_Entries
+     */
+    public function setHeaders(array $headers);
+
+    /**
+     * Set the body for the frame.
+     *
+     * @param string $body The body to set.
+     *
+     * @return void
+     */
+    public function setBody($body);
+
+    /**
+     * Returns the message command.
+     *
+     * @return string
+     */
+    public function getCommand();
+
+    /**
+     * Set the command for the frame.
+     *
+     * @param string $command The Command to set.
+     *
+     * @return void
+     */
+    public function setCommand($command);
 
     /**
      * Returns the frame object as string.
@@ -43,5 +78,4 @@ interface FrameInterface
      * @return string
      */
     public function __toString();
-
 }

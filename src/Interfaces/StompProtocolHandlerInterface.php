@@ -39,6 +39,13 @@ interface StompProtocolHandlerInterface
 {
 
     /**
+     * Inits the protocolHandler handler
+     *
+     * @return void
+     */
+    public function init();
+
+    /**
      * Handles a stomp frame.
      *
      * @param \AppserverIo\Stomp\StompFrame $stompFrame the stomp frame to handle.

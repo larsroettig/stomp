@@ -22,6 +22,8 @@ use AppserverIo\Server\Interfaces\ConnectionHandlerInterface;
 use AppserverIo\Server\Interfaces\ServerContextInterface;
 use AppserverIo\Server\Interfaces\RequestContextInterface;
 use AppserverIo\Server\Interfaces\WorkerInterface;
+use AppserverIo\Stomp\Exception\StompProtocolException;
+use AppserverIo\Stomp\Utils\ErrorMessages;
 use AppserverIo\WebServer\Interfaces\HttpModuleInterface;
 use AppserverIo\Psr\Socket\SocketInterface;
 use AppserverIo\Psr\Socket\SocketReadException;
@@ -110,11 +112,51 @@ class StompConnectionHandler implements ConnectionHandlerInterface
     protected $protocolHandler;
 
     /**
+     * Holds the stomp frame.
+     *
+     * @var \AppserverIo\Stomp\Interfaces\FrameInterface
+     */
+    protected $stompFrame;
+
+    /**
+     * Holds the stomp parser.
+     *
+     * @var \AppserverIo\Stomp\Interfaces\StompRequestParserInterface
+     */
+    protected $stompParser;
+
+    /**
      * The logger for the connection handler
      *
      * @var \Psr\Log\LoggerInterface
      */
     protected $logger;
+
+    /**
+     * @var int
+     */
+    protected $maxCommandLength = 20;
+
+    /**
+     * @var int
+     */
+    protected $maxHeaders = 1000;
+    /**
+     * @var int
+     */
+    protected $maxHeaderLength = 102410;
+
+    /**
+     * @var int
+     */
+    protected $maxDataLength = 10241024100;
+
+    /**
+     * Holds must the connection closed.
+     *
+     * @var bool
+     */
+    protected $closeConnection = false;
 
     /**
      * Inits the connection handler by given context and params
@@ -127,7 +169,7 @@ class StompConnectionHandler implements ConnectionHandlerInterface
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function init(ServerContextInterface $serverContext, array $params = null)
-    {
+   {
         // set server context
         $this->serverContext = $serverContext;
 
@@ -136,6 +178,26 @@ class StompConnectionHandler implements ConnectionHandlerInterface
 
         // get the logger for the connection handler
         $this->logger = $serverContext->getLogger();
+       $this->setConfigValues($params);
+
+
+       // injects new stomp handler
+        $this->injectProtocolHandler(new StompProtocolHandler());
+    }
+
+    /**
+     * Init instances for the stompConnection handler
+     *
+     * @return void
+     */
+    public function initInstances()
+    {
+        // init new stomp frame with received command
+        $this->stompFrame = new StompFrame();
+
+        // init new stomp frame parser
+        $this->stompParser = new StompParser();
+
     }
 
     /**
@@ -178,6 +240,8 @@ class StompConnectionHandler implements ConnectionHandlerInterface
      * Return's the request's context instance
      *
      * @return \AppserverIo\Server\Interfaces\RequestContextInterface
+     *
+     * @codeCoverageIgnore
      */
     public function getRequestContext()
     {
@@ -188,6 +252,8 @@ class StompConnectionHandler implements ConnectionHandlerInterface
      * Return's the server's configuration
      *
      * @return \AppserverIo\Server\Interfaces\ServerConfigurationInterface
+     *
+     * @codeCoverageIgnore
      */
     public function getServerConfig()
     {
@@ -198,6 +264,8 @@ class StompConnectionHandler implements ConnectionHandlerInterface
      * Return's the server context instance
      *
      * @return \AppserverIo\Server\Interfaces\ServerContextInterface
+     *
+     * @codeCoverageIgnore
      */
     public function getServerContext()
     {
@@ -215,13 +283,10 @@ class StompConnectionHandler implements ConnectionHandlerInterface
      */
     public function handle(SocketInterface $connection, WorkerInterface $worker)
     {
-
         // add connection ref to self
         $this->connection = $connection;
         $this->worker = $worker;
-
-        // injects new stomp handler
-        $this->injectProtocolHandler(new StompProtocolHandler());
+        $this->protocolHandler->init();
 
         do {
 
@@ -242,14 +307,15 @@ class StompConnectionHandler implements ConnectionHandlerInterface
                     continue;
                 }
 
+                $this->initInstances();
+
                 // remove the newline from the command
                 $command = rtrim($command, StompFrame::NEWLINE);
+                $this->stompFrame->setCommand($command);
 
-                // init new stomp frame with received command
-                $stompFrame = new StompFrame($command);
-
-                // init new stomp frame parser
-                $stompParser = new StompParser();
+                if (strlen($command) > $this->maxCommandLength) {
+                    throw new StompProtocolException(ErrorMessages::HEADER_COMMAND_LENGTH);
+                }
 
                 // read the headers from the connection
                 do {
@@ -264,37 +330,52 @@ class StompConnectionHandler implements ConnectionHandlerInterface
                     // remove the last line break
                     $line = rtrim($line, StompFrame::NEWLINE);
 
+                    // check for the max header length
+                    if (strlen($line)> $this->maxHeaderLength) {
+                        throw new StompProtocolException(ErrorMessages::HEADER_LENGTH);
+                    }
+
+                    // check for the max header size
+                    if ($this->stompParser->getHeaderSize() > $this->maxHeaders) {
+                        throw new StompProtocolException(ErrorMessages::HEADERS_WAS_EXCEEDED);
+                    }
+
                     // parse a single stomp header line
-                    $stompParser->parseHeaderLine($line);
+                    $this->stompParser->parseHeaderLine($line);
                 } while (true);
 
                 // set the headers for the stomp frame
-                $stompFrame->setHeaders($stompParser->getParsedHeaders());
+                $this->stompFrame->setHeaders($this->stompParser->getParsedHeaders());
 
                 // read the stomp body
                 $stompBody = "";
                 do {
                     $stompBody .= $connection->read(1);
+
+                    // check for the max data length
+                    if (strlen($stompBody) > $this->maxDataLength) {
+                        throw new StompProtocolException(ErrorMessages::MAX_DATA_LENGTH);
+                    }
                 } while (false === strpos($stompBody, StompFrame::NULL));
 
                 // removes the null frame from the body string
                 $stompBody = str_replace(StompFrame::NULL, "", $stompBody);
 
                 // set the body for the stomp frame
-                $stompFrame->setBody($stompBody);
+                $this->stompFrame->setBody($stompBody);
 
                 //log for frame receive
-                $this->log("FrameReceive", $stompFrame, LogLevel::INFO);
+                $this->log("FrameReceive", $this->stompFrame, LogLevel::INFO);
 
                 // delegate the frame to a handler and write the response in the stream
-                $this->getProtocolHandler()->handle($stompFrame);
+                $this->getProtocolHandler()->handle($this->stompFrame);
                 $response = $this->getProtocolHandler()->getResponseStompFrame();
                 if (isset($response)) {
                     $this->writeFrame($response, $connection);
                 }
 
                 // get the state if will the handler close the connection with the client.
-                $closeConnection = $this->getProtocolHandler()->getMustConnectionClose();
+                $this->closeConnection = $this->getProtocolHandler()->getMustConnectionClose();
             } catch (\Exception $e) {
 
                 // set the current exception as error to get the error frame for the stream
@@ -303,13 +384,12 @@ class StompConnectionHandler implements ConnectionHandlerInterface
                 $this->writeFrame($response, $connection);
 
                 // close the connection
-                $closeConnection = true;
+                $this->closeConnection = true;
             }
-        } while ($closeConnection == false);
+        } while ($this->closeConnection === false);
 
         // finally close connection
-        $connection->close();
-
+        $this->connection->close();
     }
 
     /**
@@ -346,6 +426,8 @@ class StompConnectionHandler implements ConnectionHandlerInterface
      * Returns the protocol handler.
      *
      * @return \AppserverIo\Stomp\Interfaces\StompProtocolHandlerInterface
+     *
+     * @codeCoverageIgnore
      */
     public function getProtocolHandler()
     {
@@ -355,7 +437,7 @@ class StompConnectionHandler implements ConnectionHandlerInterface
     /**
      * Write a stomp frame
      *
-     * @param \AppserverIo\Stomp\StompFrame $stompFrame The stomp frame to write
+     * @param \AppserverIo\Stomp\StompFrame           $stompFrame The stomp frame to write
      * @param \AppserverIo\Psr\Socket\SocketInterface $connection The connection to handle
      *
      * @return void
@@ -371,6 +453,8 @@ class StompConnectionHandler implements ConnectionHandlerInterface
      * Registers the shutdown function in this context
      *
      * @return void
+     *
+     * @codeCoverageIgnore
      */
     public function registerShutdown()
     {
@@ -385,6 +469,8 @@ class StompConnectionHandler implements ConnectionHandlerInterface
      * Does shutdown logic for worker if something breaks in process
      *
      * @return void
+     *
+     * @codeCoverageIgnore
      */
     public function shutdown()
     {
@@ -409,6 +495,8 @@ class StompConnectionHandler implements ConnectionHandlerInterface
      * Return's the connection used to handle with
      *
      * @return \AppserverIo\Psr\Socket\SocketInterface
+     *
+     * @codeCoverageIgnore
      */
     protected function getConnection()
     {
@@ -419,9 +507,44 @@ class StompConnectionHandler implements ConnectionHandlerInterface
      * Return's the worker instance which starte this worker thread
      *
      * @return \AppserverIo\Server\Interfaces\WorkerInterface
+     *
+     * @codeCoverageIgnore
      */
     protected function getWorker()
     {
         return $this->worker;
+    }
+
+    /**
+     * Sets the config values for the connection handler.
+     *
+     * @param array|null $params
+     *
+     * @return void
+     *
+     * @codeCoverageIgnore
+     */
+    protected function setConfigValues($params =  array())
+    {
+        if (!isset($params)) {
+            return;
+        }
+
+        //set config values
+        if (is_numeric($params['maxCommandLength'])) {
+            $this->maxCommandLength = $params['maxCommandLength'];
+        }
+
+        if (is_numeric($params['maxHeaders'])) {
+            $this->maxHeaders = $params['maxHeaders'];
+        }
+
+        if (is_numeric($params['maxHeaderLength'])) {
+            $this->maxHeaders = $params['maxHeaderLength'];
+        }
+
+        if (is_numeric($params['maxDataLength'])) {
+            $this->maxHeaders = $params['maxDataLength'];
+        }
     }
 }

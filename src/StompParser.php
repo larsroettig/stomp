@@ -76,6 +76,16 @@ class StompParser implements StompRequestParserInterface
     }
 
     /**
+     * Return the headers count.
+     *
+     * @return int
+     */
+    public function getHeaderSize()
+    {
+        return count($this->headers);
+    }
+
+    /**
      * Returns the parsed headers.
      *
      * @return array

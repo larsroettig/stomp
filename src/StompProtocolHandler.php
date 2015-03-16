@@ -91,6 +91,16 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
     {
         // set the supported protocol versions to 1.0,1.1
         $this->injectSupportedProtocolVersions(array(CommonValues::V1_0 => "", CommonValues::V1_1 => ""));
+        $this->init();
+    }
+
+    /**
+     * Init the StompProtocolHandler
+     *
+     * @return void
+     */
+    public function init()
+    {
         $this->injectAuthenticator(new SimpleAuthenticator());
         $this->mustConnectionClose = false;
     }
@@ -186,8 +196,11 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
 
         // create new stomp CONNECTED frame with headers and return
         $command = ServerCommands::CONNECTED;
-        $headers = array(Headers::SESSION => $this->getSession()->getId(), Headers::VERSION => $protocolVersion,
-                         Headers::SERVER  => CommonValues::SERVER_NAME);
+        $headers = array(
+            Headers::SESSION => $this->getSession()->getId(),
+            Headers::VERSION => $protocolVersion,
+            Headers::SERVER => CommonValues::SERVER_NAME
+        );
 
         // returns the response frame
         return new StompFrame($command, $headers);

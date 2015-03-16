@@ -61,4 +61,32 @@ class ErrorMessages
      * @var string
      */
     const UNABLE_PARSE_HEADER_LINE = "Unable to parse header line.";
+
+    /**
+     * Error message for command length was exceeded
+     *
+     * @var string
+     */
+    const HEADER_COMMAND_LENGTH  = "The maximum command length was exceeded";
+
+    /**
+     * Error message for maximum number of headers was exceeded
+     *
+     * @var string
+     */
+    const HEADER_LENGTH = "The maximum header length was exceeded";
+
+    /**
+     * Error message for maximum number of headers was exceeded
+     *
+     * @var string
+     */
+    const HEADERS_WAS_EXCEEDED = "The maximum number of headers was exceeded.";
+
+    /**
+     * Error message for maximum data length was exceeded
+     *
+     * @var string
+     */
+    const MAX_DATA_LENGTH = "The maximum data length was exceeded";
 }
