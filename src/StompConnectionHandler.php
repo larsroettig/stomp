@@ -77,13 +77,6 @@ class StompConnectionHandler implements ConnectionHandlerInterface
     protected $modules;
 
     /**
-     * Hold's errors page template
-     *
-     * @var string
-     */
-    protected $errorsPageTemplate;
-
-    /**
      * Hold's the connection instance
      *
      * @var \AppserverIo\Server\Sockets\SocketInterface
@@ -169,7 +162,7 @@ class StompConnectionHandler implements ConnectionHandlerInterface
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function init(ServerContextInterface $serverContext, array $params = null)
-   {
+    {
         // set server context
         $this->serverContext = $serverContext;
 
@@ -178,10 +171,10 @@ class StompConnectionHandler implements ConnectionHandlerInterface
 
         // get the logger for the connection handler
         $this->logger = $serverContext->getLogger();
-       $this->setConfigValues($params);
+        $this->setConfigValues($params);
 
 
-       // injects new stomp handler
+        // injects new stomp handler
         $this->injectProtocolHandler(new StompProtocolHandler());
     }
 
@@ -289,9 +282,7 @@ class StompConnectionHandler implements ConnectionHandlerInterface
         $this->protocolHandler->init();
 
         do {
-
             try {
-
                 // set the command initial to empty string
                 $command = "";
 
@@ -317,52 +308,15 @@ class StompConnectionHandler implements ConnectionHandlerInterface
                     throw new StompProtocolException(ErrorMessages::HEADER_COMMAND_LENGTH);
                 }
 
-                // read the headers from the connection
-                do {
-                    // read next line
-                    $line = $connection->readLine();
-
-                    // stomp header are complete
-                    if ($line === StompFrame::NEWLINE) {
-                        break;
-                    }
-
-                    // remove the last line break
-                    $line = rtrim($line, StompFrame::NEWLINE);
-
-                    // check for the max header length
-                    if (strlen($line)> $this->maxHeaderLength) {
-                        throw new StompProtocolException(ErrorMessages::HEADER_LENGTH);
-                    }
-
-                    // check for the max header size
-                    if ($this->stompParser->getHeaderSize() > $this->maxHeaders) {
-                        throw new StompProtocolException(ErrorMessages::HEADERS_WAS_EXCEEDED);
-                    }
-
-                    // parse a single stomp header line
-                    $this->stompParser->parseHeaderLine($line);
-                } while (true);
+                // handle the stomp frame header
+                $this->handleHeader();
 
                 // set the headers for the stomp frame
                 $this->stompFrame->setHeaders($this->stompParser->getParsedHeaders());
 
-                // read the stomp body
-                $stompBody = "";
-                do {
-                    $stompBody .= $connection->read(1);
+                // handle the stomp frame body
+                $this->handleBody();
 
-                    // check for the max data length
-                    if (strlen($stompBody) > $this->maxDataLength) {
-                        throw new StompProtocolException(ErrorMessages::MAX_DATA_LENGTH);
-                    }
-                } while (false === strpos($stompBody, StompFrame::NULL));
-
-                // removes the null frame from the body string
-                $stompBody = str_replace(StompFrame::NULL, "", $stompBody);
-
-                // set the body for the stomp frame
-                $this->stompFrame->setBody($stompBody);
 
                 //log for frame receive
                 $this->log("FrameReceive", $this->stompFrame, LogLevel::INFO);
@@ -377,7 +331,6 @@ class StompConnectionHandler implements ConnectionHandlerInterface
                 // get the state if will the handler close the connection with the client.
                 $this->closeConnection = $this->getProtocolHandler()->getMustConnectionClose();
             } catch (\Exception $e) {
-
                 // set the current exception as error to get the error frame for the stream
                 $this->getProtocolHandler()->setErrorState($e->getMessage(), array());
                 $response = $this->getProtocolHandler()->getResponseStompFrame();
@@ -518,13 +471,13 @@ class StompConnectionHandler implements ConnectionHandlerInterface
     /**
      * Sets the config values for the connection handler.
      *
-     * @param array|null $params
+     * @param array|null $params config values to set.
      *
      * @return void
      *
      * @codeCoverageIgnore
      */
-    protected function setConfigValues($params =  array())
+    protected function setConfigValues($params = array())
     {
         if (!isset($params)) {
             return;
@@ -546,5 +499,68 @@ class StompConnectionHandler implements ConnectionHandlerInterface
         if (is_numeric($params['maxDataLength'])) {
             $this->maxHeaders = $params['maxDataLength'];
         }
+    }
+
+
+    /**
+     *
+     * @throws \AppserverIo\Stomp\Exception\StompProtocolException
+     *
+     * @return void
+     */
+    protected function handleHeader()
+    {
+        // read the headers from the connection
+        do {
+            // read next line
+            $line = $this->getConnection()->readLine();
+
+            // stomp header are complete
+            if ($line === StompFrame::NEWLINE) {
+                break;
+            }
+
+            // remove the last line break
+            $line = rtrim($line, StompFrame::NEWLINE);
+
+            // check for the max header length
+            if (strlen($line) > $this->maxHeaderLength) {
+                throw new StompProtocolException(ErrorMessages::HEADER_LENGTH);
+            }
+
+            // check for the max header size
+            if ($this->stompParser->getHeaderSize() > $this->maxHeaders) {
+                throw new StompProtocolException(ErrorMessages::HEADERS_WAS_EXCEEDED);
+            }
+
+            // parse a single stomp header line
+            $this->stompParser->parseHeaderLine($line);
+        } while (true);
+    }
+
+    /**
+     *
+     * @throws \AppserverIo\Stomp\Exception\StompProtocolException
+     *
+     * @return void
+     */
+    protected function handleBody()
+    {
+        // read the stomp body
+        $stompBody = "";
+        do {
+            $stompBody .= $this->getConnection()->read(1);
+
+            // check for the max data length
+            if (strlen($stompBody) > $this->maxDataLength) {
+                throw new StompProtocolException(ErrorMessages::MAX_DATA_LENGTH);
+            }
+        } while (false === strpos($stompBody, StompFrame::NULL));
+
+        // removes the null frame from the body string
+        $stompBody = str_replace(StompFrame::NULL, "", $stompBody);
+
+        // set the body for the stomp frame
+        $this->stompFrame->setBody($stompBody);
     }
 }

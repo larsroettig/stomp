@@ -231,7 +231,6 @@ class StompFrame implements FrameInterface
     {
         // encode the header if encode header required.
         if ($this->getHeaderEncodingRequired()) {
-
             // escape "\n , : , \\" in value
             $value = strtr($value, array(
                 StompFrame::NEWLINE => '\n',
