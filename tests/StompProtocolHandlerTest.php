@@ -94,7 +94,7 @@ class StompProtocolHandlerTest extends HelperTestCase
     {
         // create some test data
         $stompFrame = new StompFrame(ClientCommands::CONNECT, array(
-            Headers::ACCEPT_VERSION => CommonValues::V1_0,
+            Headers::ACCEPT_VERSION => "1.0",
             Headers::LOGIN => "Fo",
             Headers::PASSCODE => "bar"
         ));
@@ -128,10 +128,9 @@ class StompProtocolHandlerTest extends HelperTestCase
      */
     public function testConnectWithAuthenticatorException()
     {
-
         // create some test data
         $stompFrame = new StompFrame(ClientCommands::CONNECT, array(
-            Headers::ACCEPT_VERSION => CommonValues::V1_0,
+            Headers::ACCEPT_VERSION => "1.0",
             Headers::LOGIN => "Fo",
         ));
 
@@ -231,5 +230,39 @@ class StompProtocolHandlerTest extends HelperTestCase
         $this->handler->handle($stompFrame);
 
         $this->assertTrue($isEqual);
+    }
+
+    /**
+     * @return void
+     */
+    public function testDetectProtocolVersionWithSimpleVersion()
+    {
+        $this->assertEquals("1.0",$this->handler->detectProtocolVersion("1.0"));
+    }
+
+    /**
+     * @return void
+     */
+    public function testDetectProtocolVersionWithThreeVersions()
+    {
+        $this->assertEquals("1.2",$this->handler->detectProtocolVersion("1.0,1.1,1.2"));
+    }
+
+    /**
+     * @return void
+     */
+    public function testDetectProtocolVersionWithOtherOrder()
+    {
+        $this->assertEquals("1.1",$this->handler->detectProtocolVersion("1.1,1.0"));
+    }
+
+    /**
+     * @return void
+     *
+     * @expectedException \AppserverIo\Stomp\Exception\StompProtocolException
+     */
+    public function testDetectProtocolVersionWithNotExistingVersions()
+    {
+        $this->assertEquals("1.1",$this->handler->detectProtocolVersion("2.0,5.1"));
     }
 }

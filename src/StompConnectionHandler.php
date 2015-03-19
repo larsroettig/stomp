@@ -298,6 +298,11 @@ class StompConnectionHandler implements ConnectionHandlerInterface
                     continue;
                 }
 
+                // some clients send additional newlines for heart beat
+                if ($command === StompFrame::NEWLINE) {
+                    continue;
+                }
+
                 $this->initInstances();
 
                 // remove the newline from the command
@@ -532,6 +537,9 @@ class StompConnectionHandler implements ConnectionHandlerInterface
             if ($this->stompParser->getHeaderSize() > $this->maxHeaders) {
                 throw new StompProtocolException(ErrorMessages::HEADERS_WAS_EXCEEDED);
             }
+
+
+            $this->log("line",$line);
 
             // parse a single stomp header line
             $this->stompParser->parseHeaderLine($line);

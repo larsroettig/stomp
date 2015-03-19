@@ -63,6 +63,11 @@ class CommonValues
     const V1_2 = "1.2";
 
     /**
+     *  Defines default heart beat value.
+     */
+    const DEFAULT_HEART_BEAT = "0,0";
+
+    /**
      * Defines text plain type for the stomp body.
      *
      * @var string

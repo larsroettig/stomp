@@ -89,8 +89,12 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
      */
     public function __construct()
     {
-        // set the supported protocol versions to 1.0,1.1
-        $this->injectSupportedProtocolVersions(array(CommonValues::V1_0 => "", CommonValues::V1_1 => ""));
+        // set the supported protocol versions to 1.0,1.1,1.2
+        $this->injectSupportedProtocolVersions(array(
+            CommonValues::V1_0 => "",
+            CommonValues::V1_1 => "",
+            CommonValues::V1_2 => ""
+        ));
         $this->init();
     }
 
@@ -168,6 +172,34 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
     }
 
     /**
+     * Detects the protocol version by given string
+     *
+     * @param string $protocolVersion The version string to detect the version
+     *
+     * @return string
+     *
+     * @throws \AppserverIo\Stomp\Exception\StompProtocolException
+     */
+    public function detectProtocolVersion($protocolVersion)
+    {
+        // is not required to detect the version
+        if (strpos($protocolVersion, ',') === false) {
+            return $protocolVersion;
+        }
+
+        $supportedProtocolVersions = array_keys($this->supportedProtocolVersions);
+        $acceptsVersions = explode(",", $protocolVersion);
+        $acceptsVersions = array_intersect($acceptsVersions, $supportedProtocolVersions);
+
+        if (count($acceptsVersions) == 0) {
+            $supportedVersions = implode(" ", array_keys($this->supportedProtocolVersions));
+            throw new StompProtocolException(sprintf(ErrorMessages::SUPPORTED_PROTOCOL_VERSIONS, $supportedVersions));
+        }
+
+        return max($acceptsVersions);
+    }
+
+    /**
      * Handle the connect request.
      *
      * @param \AppserverIo\Stomp\StompFrame $stompFrame The Stomp frame to handle the connect.
@@ -180,10 +212,8 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
     {
         $protocolVersion = $stompFrame->getHeaderValueByKey(Headers::ACCEPT_VERSION);
 
-        if (!array_key_exists($protocolVersion, $this->supportedProtocolVersions)) {
-            $supportedVersions = implode(" ", array_keys($this->supportedProtocolVersions));
-            throw new StompProtocolException(sprintf(ErrorMessages::SUPPORTED_PROTOCOL_VERSIONS, $supportedVersions));
-        }
+        // detects the protocol version by given string
+        $protocolVersion = $this->detectProtocolVersion($protocolVersion);
 
         $login = $stompFrame->getHeaderValueByKey(Headers::LOGIN);
         $passCode = $stompFrame->getHeaderValueByKey(Headers::PASSCODE);
@@ -199,7 +229,8 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
         $headers = array(
             Headers::SESSION => $this->getSession()->getId(),
             Headers::VERSION => $protocolVersion,
-            Headers::SERVER => CommonValues::SERVER_NAME
+            Headers::SERVER => CommonValues::SERVER_NAME,
+            Headers::HEART_BEAT => CommonValues::DEFAULT_HEART_BEAT
         );
 
         // returns the response frame
