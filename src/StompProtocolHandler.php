@@ -301,14 +301,24 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
     /**
      * Handle the disconnect request.
      *
+     * @param \AppserverIo\Stomp\StompFrame $stompFrame The Stomp frame to handle the connect.
+     *
      * @return \AppserverIo\Stomp\StompFrame The stomp frame Response
      */
-    protected function handleDisConnect()
+    protected function handleDisConnect($stompFrame)
     {
         // set state to close the client connection
         $this->mustConnectionClose = true;
+        $headers = array();
 
-        return new StompFrame(ServerCommands::RECEIPT);
+        // set the client a receiptId than must server must add this to response header
+        $receiptId = $stompFrame->getHeaderValueByKey(Headers::RECEIPT_REQUESTED);
+        if (is_string($receiptId)) {
+            $headers = array(Headers::RECEIPT_ID => $receiptId);
+        }
+
+        // returns the response frame
+        return new StompFrame(ServerCommands::RECEIPT,$headers);
     }
 
     /**

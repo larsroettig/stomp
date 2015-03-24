@@ -155,6 +155,22 @@ class StompProtocolHandlerTest extends HelperTestCase
     }
 
     /**
+     * @return void
+     */
+    public function testDisConnectWithReceipt()
+    {
+        // create some test data
+        $disConnect = new StompFrame(ClientCommands::DISCONNECT, array('receipt' => '1'));
+
+        // call the function we want test
+        $this->handler->handle($disConnect);
+
+        $response = $this->handler->getResponseStompFrame();
+        $this->assertTrue($this->handler->getMustConnectionClose());
+        $this->assertEquals($response, new StompFrame(ServerCommands::RECEIPT, array('receipt-id' =>1)));
+    }
+
+    /**
      * @return  void
      */
     public function testHandleError()
