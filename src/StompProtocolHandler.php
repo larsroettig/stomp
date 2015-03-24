@@ -318,7 +318,7 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
         }
 
         // returns the response frame
-        return new StompFrame(ServerCommands::RECEIPT,$headers);
+        return new StompFrame(ServerCommands::RECEIPT, $headers);
     }
 
     /**

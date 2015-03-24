@@ -538,11 +538,9 @@ class StompConnectionHandler implements ConnectionHandlerInterface
                 throw new StompProtocolException(ErrorMessages::HEADERS_WAS_EXCEEDED);
             }
 
-
-            $this->log("line",$line);
-
             // parse a single stomp header line
             $this->stompParser->parseHeaderLine($line);
+
         } while (true);
     }
 
