@@ -111,15 +111,12 @@ class StompParser implements StompRequestParserInterface
      */
     public function parseHeaders($frameHeaders)
     {
-        // the parsed headers
-        $headers = array();
-
         // get lines by explode header stomp newline
         $lines = explode(StompFrame::NEWLINE, $frameHeaders);
 
         // iterate over all header lines
         foreach ($lines as $line) {
-            $this->parseHeaderLine($line, $headers);
+            $this->parseHeaderLine($line);
         }
     }
 
@@ -152,7 +149,7 @@ class StompParser implements StompRequestParserInterface
         $value = $this->decodeHeaderString($value);
 
         // ignore existing keys
-        if (array_key_exists($key, $this->headers) == true) {
+        if (array_key_exists($key, $this->headers) === true) {
             return;
         }
 

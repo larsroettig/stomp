@@ -225,7 +225,6 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
         $this->setSession($connection->createQueueSession());
 
         // create new stomp CONNECTED frame with headers and return
-        $command = ServerCommands::CONNECTED;
         $headers = array(
             Headers::SESSION => $this->getSession()->getId(),
             Headers::VERSION => $protocolVersion,
@@ -234,7 +233,7 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
         );
 
         // returns the response frame
-        return new StompFrame($command, $headers);
+        return new StompFrame(ServerCommands::CONNECTED, $headers);
     }
 
     /**
@@ -281,7 +280,7 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
     protected function handleSend(StompFrame $stompFrame)
     {
         // checks ist the client authenticated
-        if ($this->getAuthenticator()->getIsAuthenticated() == false) {
+        if ($this->getAuthenticator()->getIsAuthenticated() === false) {
             throw new StompProtocolException(sprintf(ErrorMessages::FAILED_AUTH, ""));
         }
 
@@ -307,8 +306,6 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
      */
     protected function handleDisConnect($stompFrame)
     {
-        // set state to close the client connection
-        $this->mustConnectionClose = true;
         $headers = array();
 
         // set the client a receiptId than must server must add this to response header
@@ -316,6 +313,9 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
         if (is_string($receiptId)) {
             $headers = array(Headers::RECEIPT_ID => $receiptId);
         }
+
+        // set state to close the client connection
+        $this->mustConnectionClose = true;
 
         // returns the response frame
         return new StompFrame(ServerCommands::RECEIPT, $headers);
@@ -354,9 +354,6 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
      */
     protected function handleError($message, array $headers = array())
     {
-        // init new stomp frame and set command headers and message
-        $command = ServerCommands::ERROR;
-
         // set the default header
         if (count($headers) == 0) {
             $headers = array(Headers::CONTENT_TYPE => CommonValues::TEXT_PLAIN);
@@ -366,6 +363,6 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
         $this->mustConnectionClose = true;
 
         // returns the response frame
-        return new StompFrame($command, $headers, $message);
+        return new StompFrame(ServerCommands::ERROR, $headers, $message);
     }
 }
