@@ -322,7 +322,6 @@ class StompConnectionHandler implements ConnectionHandlerInterface
                 // handle the stomp frame body
                 $this->handleBody();
 
-
                 //log for frame receive
                 $this->log("FrameReceive", $this->stompFrame, LogLevel::INFO);
 
@@ -508,6 +507,7 @@ class StompConnectionHandler implements ConnectionHandlerInterface
 
 
     /**
+     * Read the headers from the connection
      *
      * @throws \AppserverIo\Stomp\Exception\StompProtocolException
      *
@@ -545,6 +545,7 @@ class StompConnectionHandler implements ConnectionHandlerInterface
     }
 
     /**
+     * Read the stomp body from the connection
      *
      * @throws \AppserverIo\Stomp\Exception\StompProtocolException
      *
