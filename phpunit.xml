@@ -1,4 +1,4 @@
-<phpunit>
+<phpunit bootstrap="bootstrap.php">
     <testsuites>
 	    <testsuite name="techdivision/webserver PHPUnit testsuite">
 	        <directory suffix="Test.php">tests</directory>
