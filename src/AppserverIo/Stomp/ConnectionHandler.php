@@ -51,7 +51,7 @@ use Psr\Log\LogLevel;
  * @link       https://github.com/appserver-io/appserver
  * @link       https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
-class StompConnectionHandler implements ConnectionHandlerInterface
+class ConnectionHandler implements ConnectionHandlerInterface
 {
 
 
@@ -175,7 +175,7 @@ class StompConnectionHandler implements ConnectionHandlerInterface
 
 
         // injects new stomp handler
-        $this->injectProtocolHandler(new StompProtocolHandler());
+        $this->injectProtocolHandler(new ProtocolHandler());
     }
 
     /**
@@ -186,10 +186,10 @@ class StompConnectionHandler implements ConnectionHandlerInterface
     public function initInstances()
     {
         // init new stomp frame with received command
-        $this->stompFrame = new StompFrame();
+        $this->stompFrame = new Frame();
 
         // init new stomp frame parser
-        $this->stompParser = new StompParser();
+        $this->stompParser = new Parser();
 
     }
 
@@ -299,14 +299,14 @@ class StompConnectionHandler implements ConnectionHandlerInterface
                 }
 
                 // some clients send additional newlines for heart beat
-                if ($command === StompFrame::NEWLINE) {
+                if ($command === Frame::NEWLINE) {
                     continue;
                 }
 
                 $this->initInstances();
 
                 // remove the newline from the command
-                $command = rtrim($command, StompFrame::NEWLINE);
+                $command = rtrim($command, Frame::NEWLINE);
                 $this->stompFrame->setCommand($command);
 
                 if (strlen($command) > $this->maxCommandLength) {
@@ -394,12 +394,12 @@ class StompConnectionHandler implements ConnectionHandlerInterface
     /**
      * Write a stomp frame
      *
-     * @param \AppserverIo\Stomp\StompFrame           $stompFrame The stomp frame to write
+     * @param \AppserverIo\Stomp\Frame                $stompFrame The stomp frame to write
      * @param \AppserverIo\Psr\Socket\SocketInterface $connection The connection to handle
      *
      * @return void
      */
-    public function writeFrame(StompFrame $stompFrame, SocketInterface $connection)
+    public function writeFrame(Frame $stompFrame, SocketInterface $connection)
     {
         $stompFrameStr = (string)$stompFrame;
         $this->log("FrameSend", $stompFrame, LogLevel::INFO);
@@ -521,12 +521,12 @@ class StompConnectionHandler implements ConnectionHandlerInterface
             $line = $this->getConnection()->readLine();
 
             // stomp header are complete
-            if ($line === StompFrame::NEWLINE) {
+            if ($line === Frame::NEWLINE) {
                 break;
             }
 
             // remove the last line break
-            $line = rtrim($line, StompFrame::NEWLINE);
+            $line = rtrim($line, Frame::NEWLINE);
 
             // check for the max header length
             if (strlen($line) > $this->maxHeaderLength) {
@@ -562,10 +562,10 @@ class StompConnectionHandler implements ConnectionHandlerInterface
             if (strlen($stompBody) > $this->maxDataLength) {
                 throw new StompProtocolException(ErrorMessages::MAX_DATA_LENGTH);
             }
-        } while (false === strpos($stompBody, StompFrame::NULL));
+        } while (false === strpos($stompBody, Frame::NULL));
 
         // removes the null frame from the body string
-        $stompBody = str_replace(StompFrame::NULL, "", $stompBody);
+        $stompBody = str_replace(Frame::NULL, "", $stompBody);
 
         // set the body for the stomp frame
         $this->stompFrame->setBody($stompBody);

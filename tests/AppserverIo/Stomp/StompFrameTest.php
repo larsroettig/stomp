@@ -44,7 +44,7 @@ class StompFrameTest extends HelperTestCase
     /**
      * The parserinstance to test.
      *
-     * @var \AppserverIo\Stomp\StompFrame
+     * @var \AppserverIo\Stomp\Frame
      */
     protected $frame;
 
@@ -55,11 +55,11 @@ class StompFrameTest extends HelperTestCase
      */
     public function setUp()
     {
-        $this->setFrame(new StompFrame());
+        $this->setFrame(new Frame());
     }
 
     /**
-     * @return StompFrame
+     * @return Frame
      */
     public function getFrame()
     {
@@ -67,7 +67,7 @@ class StompFrameTest extends HelperTestCase
     }
 
     /**
-     * @param StompFrame $frame
+     * @param Frame $frame
      */
     public function setFrame($frame)
     {

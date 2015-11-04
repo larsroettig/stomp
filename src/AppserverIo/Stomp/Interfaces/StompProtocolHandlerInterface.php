@@ -21,7 +21,7 @@
  */
 namespace AppserverIo\Stomp\Interfaces;
 
-use AppserverIo\Stomp\StompFrame;
+use AppserverIo\Stomp\Frame;
 
 /**
  * Interface for a stomp protocol handler class.
@@ -48,17 +48,17 @@ interface StompProtocolHandlerInterface
     /**
      * Handles a stomp frame.
      *
-     * @param \AppserverIo\Stomp\StompFrame $stompFrame the stomp frame to handle.
+     * @param \AppserverIo\Stomp\Frame $stompFrame the stomp frame to handle.
      *
      * @return void
      */
-    public function handle(StompFrame $stompFrame);
+    public function handle(Frame $stompFrame);
 
 
     /**
      * Returns the response stomp frame.
      *
-     * @return \AppserverIo\Stomp\StompFrame
+     * @return \AppserverIo\Stomp\Frame
      */
     public function getResponseStompFrame();
 

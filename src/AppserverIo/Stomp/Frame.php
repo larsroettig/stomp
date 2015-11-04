@@ -38,7 +38,7 @@ use AppserverIo\Stomp\Interfaces\FrameInterface;
  * @link       https://github.com/appserver-io/appserver
  * @link       https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
-class StompFrame implements FrameInterface
+class Frame implements FrameInterface
 {
     /**
      *
@@ -193,12 +193,12 @@ class StompFrame implements FrameInterface
     public function __toString()
     {
         return $this->command .
-        StompFrame::NEWLINE .
+        Frame::NEWLINE .
         $this->headersToString() .
-        StompFrame::NEWLINE .
+        Frame::NEWLINE .
         $this->body .
-        StompFrame::NULL .
-        StompFrame::NEWLINE;
+        Frame::NULL .
+        Frame::NEWLINE;
     }
 
     /**
@@ -214,7 +214,7 @@ class StompFrame implements FrameInterface
             $name = $this->encodeHeaderString($key);
             $value = $this->encodeHeaderString($value);
 
-            $headerString .= $name . StompFrame::COLON . $value . StompFrame::NEWLINE;
+            $headerString .= $name . Frame::COLON . $value . Frame::NEWLINE;
         }
 
         return $headerString;
@@ -233,9 +233,9 @@ class StompFrame implements FrameInterface
         if ($this->getHeaderEncodingRequired()) {
             // escape "\n , : , \\" in value
             $value = strtr($value, array(
-                StompFrame::NEWLINE => '\n',
-                StompFrame::COLON => '\c',
-                StompFrame::ESCAPE => '\\\\'
+                Frame::NEWLINE => '\n',
+                Frame::COLON   => '\c',
+                Frame::ESCAPE  => '\\\\'
             ));
         }
 

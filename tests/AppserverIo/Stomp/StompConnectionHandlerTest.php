@@ -35,7 +35,7 @@ class StompConnectionHandlerTest extends HelperTestCase
 {
 
     /**
-     * @var \AppserverIo\Stomp\StompConnectionHandler
+     * @var \AppserverIo\Stomp\ConnectionHandler
      */
     protected $stompConnectionHandler;
 
@@ -77,13 +77,13 @@ class StompConnectionHandlerTest extends HelperTestCase
         $this->setWorker($worker);
 
         // inject class to test
-        /** @var \AppserverIo\Stomp\StompConnectionHandler $stompConnectionHandler */
-        $stompConnectionHandler = new StompConnectionHandler();
+        /** @var \AppserverIo\Stomp\ConnectionHandler $stompConnectionHandler */
+        $stompConnectionHandler = new ConnectionHandler();
         $this->setStompConnectionHandler($stompConnectionHandler);
     }
 
     /**
-     * @return \AppserverIo\Stomp\StompConnectionHandler
+     * @return \AppserverIo\Stomp\ConnectionHandler
      */
     public function getStompConnectionHandler()
     {
@@ -91,7 +91,7 @@ class StompConnectionHandlerTest extends HelperTestCase
     }
 
     /**
-     * @param \AppserverIo\Stomp\StompConnectionHandler $stompConnectionHandler
+     * @param \AppserverIo\Stomp\ConnectionHandler $stompConnectionHandler
      */
     public function setStompConnectionHandler($stompConnectionHandler)
     {
@@ -202,7 +202,7 @@ class StompConnectionHandlerTest extends HelperTestCase
             ->will($this->returnValue(true));
 
         $protocolHandler->method('getResponseStompFrame')
-            ->will($this->returnValue(new StompFrame()));
+            ->will($this->returnValue(new Frame()));
 
         $this->getStompConnectionHandler()->injectProtocolHandler($protocolHandler);
 

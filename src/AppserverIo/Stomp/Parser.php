@@ -39,7 +39,7 @@ use AppserverIo\Stomp\Utils\ErrorMessages;
  * @link       https://github.com/appserver-io/appserver
  * @link       https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
-class StompParser implements StompRequestParserInterface
+class Parser implements StompRequestParserInterface
 {
 
     /**
@@ -112,7 +112,7 @@ class StompParser implements StompRequestParserInterface
     public function parseHeaders($frameHeaders)
     {
         // get lines by explode header stomp newline
-        $lines = explode(StompFrame::NEWLINE, $frameHeaders);
+        $lines = explode(Frame::NEWLINE, $frameHeaders);
 
         // iterate over all header lines
         foreach ($lines as $line) {
@@ -132,12 +132,12 @@ class StompParser implements StompRequestParserInterface
     public function parseHeaderLine($line)
     {
         // checks contains the line a separator
-        if (strpos($line, StompFrame::COLON) === false) {
+        if (strpos($line, Frame::COLON) === false) {
             throw new StompProtocolException(ErrorMessages::UNABLE_PARSE_HEADER_LINE);
         }
 
         // explode the line by frame colon
-        list($key, $value) = explode(StompFrame::COLON, $line, 2);
+        list($key, $value) = explode(Frame::COLON, $line, 2);
 
         // checks is the header key set
         if (strlen($key) === 0) {
@@ -173,9 +173,9 @@ class StompParser implements StompRequestParserInterface
     protected function decodeHeaderString($string)
     {
         return strtr($string, array(
-            '\\n' => StompFrame::NEWLINE,
-            '\\c' => StompFrame::COLON,
-            '\\\\' => StompFrame::ESCAPE,
+            '\\n' => Frame::NEWLINE,
+            '\\c' => Frame::COLON,
+            '\\\\' => Frame::ESCAPE,
         ));
     }
 

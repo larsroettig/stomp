@@ -43,7 +43,7 @@ class StompParserTest extends HelperTestCase
     /**
      * The parserinstance to test.
      *
-     * @var \AppserverIo\Stomp\StompParser
+     * @var \AppserverIo\Stomp\Parser
      */
     protected $parser;
 
@@ -54,7 +54,7 @@ class StompParserTest extends HelperTestCase
      */
     public function setUp()
     {
-        $this->parser = new StompParser();
+        $this->parser = new Parser();
     }
 
     /**
