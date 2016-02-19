@@ -21,7 +21,7 @@
 
 namespace AppserverIo\Stomp;
 
-use AppserverIo\Stomp\Exception\StompProtocolException;
+use AppserverIo\Stomp\Exception\ProtocolException;
 use AppserverIo\Stomp\Protocol\ClientCommands;
 use AppserverIo\Stomp\Protocol\CommonValues;
 use AppserverIo\Stomp\Protocol\Headers;
@@ -82,7 +82,7 @@ class StompFrameTest extends HelperTestCase
         // create some data for test
         $header = array(Headers::LOGIN => "foobar", Headers::PASSCODE => "password");
 
-        /// call the method we want test
+        // call the method we want test
         $this->getFrame()->setHeaders($header);
 
         // checks the results

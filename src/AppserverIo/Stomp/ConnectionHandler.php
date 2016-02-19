@@ -22,7 +22,7 @@ use AppserverIo\Server\Interfaces\ConnectionHandlerInterface;
 use AppserverIo\Server\Interfaces\ServerContextInterface;
 use AppserverIo\Server\Interfaces\RequestContextInterface;
 use AppserverIo\Server\Interfaces\WorkerInterface;
-use AppserverIo\Stomp\Exception\StompProtocolException;
+use AppserverIo\Stomp\Exception\ProtocolException;
 use AppserverIo\Stomp\Utils\ErrorMessages;
 use AppserverIo\WebServer\Interfaces\HttpModuleInterface;
 use AppserverIo\Psr\Socket\SocketInterface;
@@ -36,7 +36,7 @@ use AppserverIo\Http\HttpPart;
 use AppserverIo\Http\HttpQueryParser;
 use AppserverIo\Http\HttpRequestParser;
 use AppserverIo\Http\HttpResponseStates;
-use AppserverIo\Stomp\Interfaces\StompProtocolHandlerInterface;
+use AppserverIo\Stomp\Interfaces\ProtocolHandlerInterface;
 use Psr\Log\LogLevel;
 
 /**
@@ -100,7 +100,7 @@ class ConnectionHandler implements ConnectionHandlerInterface
     /**
      * Holds the stomp protocol handler.
      *
-     * @var \AppserverIo\Stomp\Interfaces\StompProtocolHandlerInterface
+     * @var \AppserverIo\Stomp\Interfaces\ProtocolHandlerInterface
      */
     protected $protocolHandler;
 
@@ -114,7 +114,7 @@ class ConnectionHandler implements ConnectionHandlerInterface
     /**
      * Holds the stomp parser.
      *
-     * @var \AppserverIo\Stomp\Interfaces\StompRequestParserInterface
+     * @var \AppserverIo\Stomp\Interfaces\RequestParserInterface
      */
     protected $stompParser;
 
@@ -158,8 +158,6 @@ class ConnectionHandler implements ConnectionHandlerInterface
      * @param array                                                 $params        The params for connection handler
      *
      * @return void
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function init(ServerContextInterface $serverContext, array $params = null)
     {
@@ -172,7 +170,6 @@ class ConnectionHandler implements ConnectionHandlerInterface
         // get the logger for the connection handler
         $this->logger = $serverContext->getLogger();
         $this->setConfigValues($params);
-
 
         // injects new stomp handler
         $this->injectProtocolHandler(new ProtocolHandler());
@@ -310,7 +307,7 @@ class ConnectionHandler implements ConnectionHandlerInterface
                 $this->stompFrame->setCommand($command);
 
                 if (strlen($command) > $this->maxCommandLength) {
-                    throw new StompProtocolException(ErrorMessages::HEADER_COMMAND_LENGTH);
+                    throw new ProtocolException(ErrorMessages::HEADER_COMMAND_LENGTH);
                 }
 
                 // handle the stomp frame header
@@ -352,11 +349,11 @@ class ConnectionHandler implements ConnectionHandlerInterface
     /**
      * Inject the handler stomp handler to handle stomp request.
      *
-     * @param StompProtocolHandlerInterface $protocolHandler the protocol handler to inject.
+     * @param ProtocolHandlerInterface $protocolHandler the protocol handler to inject.
      *
      * @return  void
      */
-    public function injectProtocolHandler(StompProtocolHandlerInterface $protocolHandler)
+    public function injectProtocolHandler(ProtocolHandlerInterface $protocolHandler)
     {
         $this->protocolHandler = $protocolHandler;
     }
@@ -382,7 +379,7 @@ class ConnectionHandler implements ConnectionHandlerInterface
     /**
      * Returns the protocol handler.
      *
-     * @return \AppserverIo\Stomp\Interfaces\StompProtocolHandlerInterface
+     * @return \AppserverIo\Stomp\Interfaces\ProtocolHandlerInterface
      *
      * @codeCoverageIgnore
      */
@@ -478,8 +475,6 @@ class ConnectionHandler implements ConnectionHandlerInterface
      * @param array|null $params config values to set.
      *
      * @return void
-     *
-     * @codeCoverageIgnore
      */
     protected function setConfigValues($params = array())
     {
@@ -509,7 +504,7 @@ class ConnectionHandler implements ConnectionHandlerInterface
     /**
      * Read the headers from the connection
      *
-     * @throws \AppserverIo\Stomp\Exception\StompProtocolException
+     * @throws \AppserverIo\Stomp\Exception\ProtocolException
      *
      * @return void
      */
@@ -530,12 +525,12 @@ class ConnectionHandler implements ConnectionHandlerInterface
 
             // check for the max header length
             if (strlen($line) > $this->maxHeaderLength) {
-                throw new StompProtocolException(ErrorMessages::HEADER_LENGTH);
+                throw new ProtocolException(ErrorMessages::HEADER_LENGTH);
             }
 
             // check for the max header size
             if ($this->stompParser->getHeaderSize() > $this->maxHeaders) {
-                throw new StompProtocolException(ErrorMessages::HEADERS_WAS_EXCEEDED);
+                throw new ProtocolException(ErrorMessages::HEADERS_WAS_EXCEEDED);
             }
 
             // parse a single stomp header line
@@ -547,7 +542,7 @@ class ConnectionHandler implements ConnectionHandlerInterface
     /**
      * Read the stomp body from the connection
      *
-     * @throws \AppserverIo\Stomp\Exception\StompProtocolException
+     * @throws \AppserverIo\Stomp\Exception\ProtocolException
      *
      * @return void
      */
@@ -560,7 +555,7 @@ class ConnectionHandler implements ConnectionHandlerInterface
 
             // check for the max data length
             if (strlen($stompBody) > $this->maxDataLength) {
-                throw new StompProtocolException(ErrorMessages::MAX_DATA_LENGTH);
+                throw new ProtocolException(ErrorMessages::MAX_DATA_LENGTH);
             }
         } while (false === strpos($stompBody, Frame::NULL));
 

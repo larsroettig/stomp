@@ -23,7 +23,7 @@ namespace AppserverIo\Stomp;
 
 use AppserverIo\Messaging\QueueSender;
 use PDepend\TextUI\Command;
-use AppserverIo\Stomp\Exception\StompProtocolException;
+use AppserverIo\Stomp\Exception\ProtocolException;
 use AppserverIo\Stomp\Protocol\ClientCommands;
 use AppserverIo\Stomp\Protocol\CommonValues;
 use AppserverIo\Stomp\Protocol\Headers;
@@ -60,7 +60,7 @@ class StompProtocolHandlerTest extends HelperTestCase
         $this->handler = new ProtocolHandler();
 
         // init new authenticator mock object
-        /** @var \AppserverIo\Stomp\Interfaces\Authenticator $authenticator */
+        /** @var \AppserverIo\Stomp\Interfaces\AuthenticatorInterface $authenticator */
         $authenticator = $this->getMockBuilder('AppserverIo\Stomp\Interfaces\AuthenticatorInterface')->getMock();
 
         $authenticator->expects($this->any())
@@ -73,7 +73,7 @@ class StompProtocolHandlerTest extends HelperTestCase
                 if ($name == "Fo" && $password == "bar") {
                     return md5(rand());
                 } else {
-                    throw new StompProtocolException("");
+                    throw new ProtocolException("");
                 }
             }));
 
@@ -104,7 +104,7 @@ class StompProtocolHandlerTest extends HelperTestCase
     }
 
     /**
-     * @expectedException \AppserverIo\Stomp\Exception\StompProtocolException
+     * @expectedException \AppserverIo\Stomp\Exception\ProtocolException
      *
      *
      * @return void
@@ -122,7 +122,7 @@ class StompProtocolHandlerTest extends HelperTestCase
 
 
     /**
-     * @expectedException \AppserverIo\Stomp\Exception\StompProtocolException
+     * @expectedException \AppserverIo\Stomp\Exception\ProtocolException
      *
      * @return void
      */
@@ -186,7 +186,7 @@ class StompProtocolHandlerTest extends HelperTestCase
     }
 
     /**
-     * @expectedException \AppserverIo\Stomp\Exception\StompProtocolException
+     * @expectedException \AppserverIo\Stomp\Exception\ProtocolException
      */
     public function testHandleSendNotAuthenticated()
     {
@@ -275,7 +275,7 @@ class StompProtocolHandlerTest extends HelperTestCase
     /**
      * @return void
      *
-     * @expectedException \AppserverIo\Stomp\Exception\StompProtocolException
+     * @expectedException \AppserverIo\Stomp\Exception\ProtocolException
      */
     public function testDetectProtocolVersionWithNotExistingVersions()
     {

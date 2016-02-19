@@ -1,6 +1,6 @@
 <?php
 /**
- * AppserverIo\Stomp\Interfaces\StompRequestParserInterface
+ * AppserverIo\Stomp\Interfaces\ProtocolHandlerInterface
  *
  * NOTICE OF LICENSE
  *
@@ -21,8 +21,10 @@
  */
 namespace AppserverIo\Stomp\Interfaces;
 
+use AppserverIo\Stomp\Frame;
+
 /**
- * Interface for a stomp request parser class.
+ * Interface for a stomp protocol handler class.
  *
  * @category   AppserverIo
  * @package    Appserver
@@ -33,42 +35,47 @@ namespace AppserverIo\Stomp\Interfaces;
  * @link       https://github.com/appserver-io/appserver
  * @link       https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
-interface StompRequestParserInterface
+interface ProtocolHandlerInterface
 {
 
     /**
-     * Returns the parsed stomp headers.
-     *
-     * @return array
-     */
-    public function getParsedHeaders();
-
-    /**
-     * Parse's the given header line
-     *
-     * @param string $line The line defining a stomp request header
-     *
-     * @return void
-     *
-     * @throws \AppserverIo\Stomp\Exception\StompProtocolException
-     */
-    public function parseHeaderLine($line);
-
-    /**
-     * Parse the stomp frame headers.
-     *
-     * @param string $frameHeaders The frame headers
-     *
-     * @return void
-     *
-     * @throws \AppserverIo\Stomp\Exception\StompProtocolException
-     */
-    public function parseHeaders($frameHeaders);
-
-    /**
-     * Clear the headers to parse new stomp request.
+     * Inits the protocolHandler handler
      *
      * @return void
      */
-    public function clearHeaders();
+    public function init();
+
+    /**
+     * Handles a stomp frame.
+     *
+     * @param \AppserverIo\Stomp\Frame $stompFrame the stomp frame to handle.
+     *
+     * @return void
+     */
+    public function handle(Frame $stompFrame);
+
+
+    /**
+     * Returns the response stomp frame.
+     *
+     * @return \AppserverIo\Stomp\Frame
+     */
+    public function getResponseStompFrame();
+
+    /**
+     * Sets the state from handler to error.
+     *
+     * @param string $message the message to set for the error frame.
+     * @param array  $headers headers to set to error frame.
+     *
+     * @return mixed
+     */
+    public function setErrorState($message, $headers);
+
+    /**
+     * Returns must the parent handler the connection close
+     *
+     * @return bool
+     */
+    public function getMustConnectionClose();
 }

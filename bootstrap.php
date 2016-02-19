@@ -21,4 +21,5 @@
 * @link      http://www.appserver.io
 */
 $loader = require 'vendor/autoload.php';
-$loader->add('AppserverIo\\Appserver', 'src');
+$loader->add('AppserverIo\\Stomp', 'src');
+$loader->add('AppserverIo\\Stomp', 'tests');

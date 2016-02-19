@@ -21,7 +21,7 @@
 
 namespace AppserverIo\Stomp;
 
-use AppserverIo\Stomp\Exception\StompProtocolException;
+use AppserverIo\Stomp\Exception\ProtocolException;
 use AppserverIo\Stomp\Protocol\ClientCommands;
 use AppserverIo\Stomp\Protocol\CommonValues;
 use AppserverIo\Stomp\Protocol\Headers;
@@ -88,7 +88,7 @@ class StompParserTest extends HelperTestCase
 
 
     /**
-     * @expectedException \AppserverIo\Stomp\Exception\StompProtocolException
+     * @expectedException \AppserverIo\Stomp\Exception\ProtocolException
      *
      * @return void
      */
@@ -99,7 +99,7 @@ class StompParserTest extends HelperTestCase
     }
 
     /**
-     * @expectedException \AppserverIo\Stomp\Exception\StompProtocolException
+     * @expectedException \AppserverIo\Stomp\Exception\ProtocolException
      *
      * @return void
      */
@@ -110,7 +110,7 @@ class StompParserTest extends HelperTestCase
     }
 
     /**
-     * @expectedException \AppserverIo\Stomp\Exception\StompProtocolException
+     * @expectedException \AppserverIo\Stomp\Exception\ProtocolException
      *
      * @return void
      */
@@ -121,7 +121,7 @@ class StompParserTest extends HelperTestCase
     }
 
     /**
-     * @expectedException \AppserverIo\Stomp\Exception\StompProtocolException
+     * @expectedException \AppserverIo\Stomp\Exception\ProtocolException
      *
      * @return void
      */

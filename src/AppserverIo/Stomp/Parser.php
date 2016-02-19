@@ -21,8 +21,8 @@
 
 namespace AppserverIo\Stomp;
 
-use AppserverIo\Stomp\Exception\StompProtocolException;
-use AppserverIo\Stomp\Interfaces\StompRequestParserInterface;
+use AppserverIo\Stomp\Exception\ProtocolException;
+use AppserverIo\Stomp\Interfaces\RequestParserInterface;
 use AppserverIo\Stomp\Protocol\CommonValues;
 use AppserverIo\Stomp\Protocol\Headers;
 use AppserverIo\Stomp\Utils\ErrorMessages;
@@ -39,7 +39,7 @@ use AppserverIo\Stomp\Utils\ErrorMessages;
  * @link       https://github.com/appserver-io/appserver
  * @link       https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
-class Parser implements StompRequestParserInterface
+class Parser implements RequestParserInterface
 {
 
     /**
@@ -107,7 +107,7 @@ class Parser implements StompRequestParserInterface
      * @param string $frameHeaders The frame headers
      *
      * @return void
-     * @throws \AppserverIo\Stomp\Exception\StompProtocolException
+     * @throws \AppserverIo\Stomp\Exception\ProtocolException
      */
     public function parseHeaders($frameHeaders)
     {
@@ -127,13 +127,13 @@ class Parser implements StompRequestParserInterface
      *
      * @return void
      *
-     * @throws \AppserverIo\Stomp\Exception\StompProtocolException
+     * @throws \AppserverIo\Stomp\Exception\ProtocolException
      */
     public function parseHeaderLine($line)
     {
         // checks contains the line a separator
         if (strpos($line, Frame::COLON) === false) {
-            throw new StompProtocolException(ErrorMessages::UNABLE_PARSE_HEADER_LINE);
+            throw new ProtocolException(ErrorMessages::UNABLE_PARSE_HEADER_LINE);
         }
 
         // explode the line by frame colon
@@ -141,7 +141,7 @@ class Parser implements StompRequestParserInterface
 
         // checks is the header key set
         if (strlen($key) === 0) {
-            throw new StompProtocolException(ErrorMessages::UNABLE_PARSE_HEADER_LINE);
+            throw new ProtocolException(ErrorMessages::UNABLE_PARSE_HEADER_LINE);
         }
 
         // decode the key value pair
@@ -156,7 +156,7 @@ class Parser implements StompRequestParserInterface
         // validate the value by given key
         if ($this->validateHeaderValue($key, $value) === false) {
             $type = $this->keyValidationList[$key];
-            throw new StompProtocolException(sprintf(ErrorMessages::HEADER_VALIDATION_ERROR, $key, $type));
+            throw new ProtocolException(sprintf(ErrorMessages::HEADER_VALIDATION_ERROR, $key, $type));
         }
 
         // set the key value pair
