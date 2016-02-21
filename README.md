@@ -91,8 +91,6 @@ Can receive stomp messages and will send it to "Appserver.io message Queue".
 ## Development/Deployment 
 * run unit test => ant run-tests
 
-
-
 TODO
 ==========
 

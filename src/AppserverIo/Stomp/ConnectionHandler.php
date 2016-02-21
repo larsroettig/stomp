@@ -54,7 +54,6 @@ use Psr\Log\LogLevel;
 class ConnectionHandler implements ConnectionHandlerInterface
 {
 
-
     /**
      * Hold's the server context instance
      *
@@ -150,6 +149,13 @@ class ConnectionHandler implements ConnectionHandlerInterface
      * @var bool
      */
     protected $closeConnection = false;
+
+    /**
+     * Holds the flag for developer mode.
+     *
+     * @var bool
+     */
+    protected $developerMode =  false;
 
     /**
      * Inits the connection handler by given context and params
@@ -369,6 +375,12 @@ class ConnectionHandler implements ConnectionHandlerInterface
      */
     protected function log($message, $params, $level = LogLevel::INFO)
     {
+
+        // logging is´t use if developer deactivate.
+        if ($this->developerMode === false) {
+            return;
+        }
+
         if (isset($params)) {
             $message .= var_export($params, true);
         }
@@ -472,31 +484,35 @@ class ConnectionHandler implements ConnectionHandlerInterface
     /**
      * Sets the config values for the connection handler.
      *
-     * @param array|null $params config values to set.
+     * @param array $params config values to set.
      *
      * @return void
      */
-    protected function setConfigValues($params = array())
+    public function setConfigValues($params = array())
     {
         if (!isset($params)) {
             return;
         }
 
         //set config values
-        if (is_numeric($params['maxCommandLength'])) {
+        if (isset($params['maxCommandLength']) && is_numeric($params['maxCommandLength'])) {
             $this->maxCommandLength = $params['maxCommandLength'];
         }
 
-        if (is_numeric($params['maxHeaders'])) {
+        if (isset($params['maxHeaders']) && is_numeric($params['maxHeaders'])) {
             $this->maxHeaders = $params['maxHeaders'];
         }
 
-        if (is_numeric($params['maxHeaderLength'])) {
+        if (isset($params['maxHeaderLength']) && is_numeric($params['maxHeaderLength'])) {
             $this->maxHeaders = $params['maxHeaderLength'];
         }
 
-        if (is_numeric($params['maxDataLength'])) {
+        if (isset($params['maxDataLength']) && is_numeric($params['maxDataLength'])) {
             $this->maxHeaders = $params['maxDataLength'];
+        }
+
+        if (isset($params['developerMode']) && is_bool($params['developerMode'])) {
+            $this->developerMode = $params['developerMode'];
         }
     }
 
@@ -557,6 +573,7 @@ class ConnectionHandler implements ConnectionHandlerInterface
             if (strlen($stompBody) > $this->maxDataLength) {
                 throw new ProtocolException(ErrorMessages::MAX_DATA_LENGTH);
             }
+
         } while (false === strpos($stompBody, Frame::NULL));
 
         // removes the null frame from the body string
