@@ -21,7 +21,7 @@
 
 namespace AppserverIo\Stomp\Authenticator;
 
-use AppserverIo\Stomp\Exception\StompProtocolException;
+use AppserverIo\Stomp\Exception\ProtocolException;
 use AppserverIo\Stomp\Interfaces\AuthenticatorInterface;
 use AppserverIo\Stomp\Utils\ErrorMessages;
 
@@ -63,7 +63,7 @@ class SimpleAuthenticator implements AuthenticatorInterface
             return md5(rand());
         }
 
-        throw new StompProtocolException(sprintf(ErrorMessages::FAILED_AUTH, $login));
+        throw new ProtocolException(sprintf(ErrorMessages::FAILED_AUTH, $login));
     }
 
     /**

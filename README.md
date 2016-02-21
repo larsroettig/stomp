@@ -88,6 +88,9 @@ Can receive stomp messages and will send it to "Appserver.io message Queue".
 
 * Restart the Apserver
 
+## Development/Deployment 
+* run unit test => ant run-tests
+
 TODO
 ==========
 

@@ -22,7 +22,7 @@ use AppserverIo\Server\Interfaces\ConnectionHandlerInterface;
 use AppserverIo\Server\Interfaces\ServerContextInterface;
 use AppserverIo\Server\Interfaces\RequestContextInterface;
 use AppserverIo\Server\Interfaces\WorkerInterface;
-use AppserverIo\Stomp\Exception\StompProtocolException;
+use AppserverIo\Stomp\Exception\ProtocolException;
 use AppserverIo\Stomp\Utils\ErrorMessages;
 use AppserverIo\WebServer\Interfaces\HttpModuleInterface;
 use AppserverIo\Psr\Socket\SocketInterface;
@@ -36,7 +36,7 @@ use AppserverIo\Http\HttpPart;
 use AppserverIo\Http\HttpQueryParser;
 use AppserverIo\Http\HttpRequestParser;
 use AppserverIo\Http\HttpResponseStates;
-use AppserverIo\Stomp\Interfaces\StompProtocolHandlerInterface;
+use AppserverIo\Stomp\Interfaces\ProtocolHandlerInterface;
 use Psr\Log\LogLevel;
 
 /**
@@ -51,9 +51,8 @@ use Psr\Log\LogLevel;
  * @link       https://github.com/appserver-io/appserver
  * @link       https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
-class StompConnectionHandler implements ConnectionHandlerInterface
+class ConnectionHandler implements ConnectionHandlerInterface
 {
-
 
     /**
      * Hold's the server context instance
@@ -100,7 +99,7 @@ class StompConnectionHandler implements ConnectionHandlerInterface
     /**
      * Holds the stomp protocol handler.
      *
-     * @var \AppserverIo\Stomp\Interfaces\StompProtocolHandlerInterface
+     * @var \AppserverIo\Stomp\Interfaces\ProtocolHandlerInterface
      */
     protected $protocolHandler;
 
@@ -114,7 +113,7 @@ class StompConnectionHandler implements ConnectionHandlerInterface
     /**
      * Holds the stomp parser.
      *
-     * @var \AppserverIo\Stomp\Interfaces\StompRequestParserInterface
+     * @var \AppserverIo\Stomp\Interfaces\RequestParserInterface
      */
     protected $stompParser;
 
@@ -152,14 +151,19 @@ class StompConnectionHandler implements ConnectionHandlerInterface
     protected $closeConnection = false;
 
     /**
+     * Holds the flag for developer mode.
+     *
+     * @var bool
+     */
+    protected $developerMode =  false;
+
+    /**
      * Inits the connection handler by given context and params
      *
      * @param \AppserverIo\Server\Interfaces\ServerContextInterface $serverContext The server's context
      * @param array                                                 $params        The params for connection handler
      *
      * @return void
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function init(ServerContextInterface $serverContext, array $params = null)
     {
@@ -173,9 +177,8 @@ class StompConnectionHandler implements ConnectionHandlerInterface
         $this->logger = $serverContext->getLogger();
         $this->setConfigValues($params);
 
-
         // injects new stomp handler
-        $this->injectProtocolHandler(new StompProtocolHandler());
+        $this->injectProtocolHandler(new ProtocolHandler());
     }
 
     /**
@@ -186,10 +189,10 @@ class StompConnectionHandler implements ConnectionHandlerInterface
     public function initInstances()
     {
         // init new stomp frame with received command
-        $this->stompFrame = new StompFrame();
+        $this->stompFrame = new Frame();
 
         // init new stomp frame parser
-        $this->stompParser = new StompParser();
+        $this->stompParser = new Parser();
 
     }
 
@@ -299,18 +302,18 @@ class StompConnectionHandler implements ConnectionHandlerInterface
                 }
 
                 // some clients send additional newlines for heart beat
-                if ($command === StompFrame::NEWLINE) {
+                if ($command === Frame::NEWLINE) {
                     continue;
                 }
 
                 $this->initInstances();
 
                 // remove the newline from the command
-                $command = rtrim($command, StompFrame::NEWLINE);
+                $command = rtrim($command, Frame::NEWLINE);
                 $this->stompFrame->setCommand($command);
 
                 if (strlen($command) > $this->maxCommandLength) {
-                    throw new StompProtocolException(ErrorMessages::HEADER_COMMAND_LENGTH);
+                    throw new ProtocolException(ErrorMessages::HEADER_COMMAND_LENGTH);
                 }
 
                 // handle the stomp frame header
@@ -352,11 +355,11 @@ class StompConnectionHandler implements ConnectionHandlerInterface
     /**
      * Inject the handler stomp handler to handle stomp request.
      *
-     * @param StompProtocolHandlerInterface $protocolHandler the protocol handler to inject.
+     * @param ProtocolHandlerInterface $protocolHandler the protocol handler to inject.
      *
      * @return  void
      */
-    public function injectProtocolHandler(StompProtocolHandlerInterface $protocolHandler)
+    public function injectProtocolHandler(ProtocolHandlerInterface $protocolHandler)
     {
         $this->protocolHandler = $protocolHandler;
     }
@@ -372,6 +375,12 @@ class StompConnectionHandler implements ConnectionHandlerInterface
      */
     protected function log($message, $params, $level = LogLevel::INFO)
     {
+
+        // logging is´t use if developer deactivate.
+        if ($this->developerMode === false) {
+            return;
+        }
+
         if (isset($params)) {
             $message .= var_export($params, true);
         }
@@ -382,7 +391,7 @@ class StompConnectionHandler implements ConnectionHandlerInterface
     /**
      * Returns the protocol handler.
      *
-     * @return \AppserverIo\Stomp\Interfaces\StompProtocolHandlerInterface
+     * @return \AppserverIo\Stomp\Interfaces\ProtocolHandlerInterface
      *
      * @codeCoverageIgnore
      */
@@ -394,12 +403,12 @@ class StompConnectionHandler implements ConnectionHandlerInterface
     /**
      * Write a stomp frame
      *
-     * @param \AppserverIo\Stomp\StompFrame           $stompFrame The stomp frame to write
+     * @param \AppserverIo\Stomp\Frame                $stompFrame The stomp frame to write
      * @param \AppserverIo\Psr\Socket\SocketInterface $connection The connection to handle
      *
      * @return void
      */
-    public function writeFrame(StompFrame $stompFrame, SocketInterface $connection)
+    public function writeFrame(Frame $stompFrame, SocketInterface $connection)
     {
         $stompFrameStr = (string)$stompFrame;
         $this->log("FrameSend", $stompFrame, LogLevel::INFO);
@@ -475,33 +484,35 @@ class StompConnectionHandler implements ConnectionHandlerInterface
     /**
      * Sets the config values for the connection handler.
      *
-     * @param array|null $params config values to set.
+     * @param array $params config values to set.
      *
      * @return void
-     *
-     * @codeCoverageIgnore
      */
-    protected function setConfigValues($params = array())
+    public function setConfigValues($params = array())
     {
         if (!isset($params)) {
             return;
         }
 
         //set config values
-        if (is_numeric($params['maxCommandLength'])) {
+        if (isset($params['maxCommandLength']) && is_numeric($params['maxCommandLength'])) {
             $this->maxCommandLength = $params['maxCommandLength'];
         }
 
-        if (is_numeric($params['maxHeaders'])) {
+        if (isset($params['maxHeaders']) && is_numeric($params['maxHeaders'])) {
             $this->maxHeaders = $params['maxHeaders'];
         }
 
-        if (is_numeric($params['maxHeaderLength'])) {
+        if (isset($params['maxHeaderLength']) && is_numeric($params['maxHeaderLength'])) {
             $this->maxHeaders = $params['maxHeaderLength'];
         }
 
-        if (is_numeric($params['maxDataLength'])) {
+        if (isset($params['maxDataLength']) && is_numeric($params['maxDataLength'])) {
             $this->maxHeaders = $params['maxDataLength'];
+        }
+
+        if (isset($params['developerMode']) && is_bool($params['developerMode'])) {
+            $this->developerMode = $params['developerMode'];
         }
     }
 
@@ -509,7 +520,7 @@ class StompConnectionHandler implements ConnectionHandlerInterface
     /**
      * Read the headers from the connection
      *
-     * @throws \AppserverIo\Stomp\Exception\StompProtocolException
+     * @throws \AppserverIo\Stomp\Exception\ProtocolException
      *
      * @return void
      */
@@ -521,21 +532,21 @@ class StompConnectionHandler implements ConnectionHandlerInterface
             $line = $this->getConnection()->readLine();
 
             // stomp header are complete
-            if ($line === StompFrame::NEWLINE) {
+            if ($line === Frame::NEWLINE) {
                 break;
             }
 
             // remove the last line break
-            $line = rtrim($line, StompFrame::NEWLINE);
+            $line = rtrim($line, Frame::NEWLINE);
 
             // check for the max header length
             if (strlen($line) > $this->maxHeaderLength) {
-                throw new StompProtocolException(ErrorMessages::HEADER_LENGTH);
+                throw new ProtocolException(ErrorMessages::HEADER_LENGTH);
             }
 
             // check for the max header size
             if ($this->stompParser->getHeaderSize() > $this->maxHeaders) {
-                throw new StompProtocolException(ErrorMessages::HEADERS_WAS_EXCEEDED);
+                throw new ProtocolException(ErrorMessages::HEADERS_WAS_EXCEEDED);
             }
 
             // parse a single stomp header line
@@ -547,7 +558,7 @@ class StompConnectionHandler implements ConnectionHandlerInterface
     /**
      * Read the stomp body from the connection
      *
-     * @throws \AppserverIo\Stomp\Exception\StompProtocolException
+     * @throws \AppserverIo\Stomp\Exception\ProtocolException
      *
      * @return void
      */
@@ -560,12 +571,13 @@ class StompConnectionHandler implements ConnectionHandlerInterface
 
             // check for the max data length
             if (strlen($stompBody) > $this->maxDataLength) {
-                throw new StompProtocolException(ErrorMessages::MAX_DATA_LENGTH);
+                throw new ProtocolException(ErrorMessages::MAX_DATA_LENGTH);
             }
-        } while (false === strpos($stompBody, StompFrame::NULL));
+
+        } while (false === strpos($stompBody, Frame::NULL));
 
         // removes the null frame from the body string
-        $stompBody = str_replace(StompFrame::NULL, "", $stompBody);
+        $stompBody = str_replace(Frame::NULL, "", $stompBody);
 
         // set the body for the stomp frame
         $this->stompFrame->setBody($stompBody);

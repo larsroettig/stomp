@@ -26,8 +26,8 @@ use AppserverIo\Messaging\QueueConnectionFactory;
 use AppserverIo\Messaging\StringMessage;
 use AppserverIo\Stomp\Interfaces\AuthenticatorInterface;
 use AppserverIo\Stomp\Authenticator\SimpleAuthenticator;
-use AppserverIo\Stomp\Exception\StompProtocolException;
-use AppserverIo\Stomp\Interfaces\StompProtocolHandlerInterface;
+use AppserverIo\Stomp\Exception\ProtocolException;
+use AppserverIo\Stomp\Interfaces\ProtocolHandlerInterface;
 use AppserverIo\Stomp\Protocol\ClientCommands;
 use AppserverIo\Stomp\Protocol\CommonValues;
 use AppserverIo\Stomp\Protocol\Headers;
@@ -46,7 +46,7 @@ use AppserverIo\Stomp\Utils\ErrorMessages;
  * @link       https://github.com/appserver-io/appserver
  * @link       https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
-class StompProtocolHandler implements StompProtocolHandlerInterface
+class ProtocolHandler implements ProtocolHandlerInterface
 {
 
     /**
@@ -66,7 +66,7 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
     /**
      * Holds the response as stomp frame.
      *
-     * @var \AppserverIo\Stomp\StompFrame
+     * @var \AppserverIo\Stomp\Frame
      */
     protected $response;
 
@@ -146,13 +146,13 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
     /**
      * Handle the connect request.
      *
-     * @param \AppserverIo\Stomp\StompFrame $stompFrame The Stomp frame to handle the connect.
+     * @param \AppserverIo\Stomp\Frame $stompFrame The Stomp frame to handle the connect.
      *
      * @return void
      *
-     * throws \AppserverIo\Stomp\Exception\StompProtocolException
+     * throws \AppserverIo\Stomp\Exception\ProtocolException
      */
-    public function handle(StompFrame $stompFrame)
+    public function handle(Frame $stompFrame)
     {
         switch ($stompFrame->getCommand()) {
             case ClientCommands::CONNECT:
@@ -178,7 +178,7 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
      *
      * @return string
      *
-     * @throws \AppserverIo\Stomp\Exception\StompProtocolException
+     * @throws \AppserverIo\Stomp\Exception\ProtocolException
      */
     public function detectProtocolVersion($protocolVersion)
     {
@@ -193,7 +193,7 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
 
         if (count($acceptsVersions) == 0) {
             $supportedVersions = implode(" ", array_keys($this->supportedProtocolVersions));
-            throw new StompProtocolException(sprintf(ErrorMessages::SUPPORTED_PROTOCOL_VERSIONS, $supportedVersions));
+            throw new ProtocolException(sprintf(ErrorMessages::SUPPORTED_PROTOCOL_VERSIONS, $supportedVersions));
         }
 
         return max($acceptsVersions);
@@ -202,13 +202,13 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
     /**
      * Handle the connect request.
      *
-     * @param \AppserverIo\Stomp\StompFrame $stompFrame The Stomp frame to handle the connect.
+     * @param \AppserverIo\Stomp\Frame $stompFrame The Stomp frame to handle the connect.
      *
-     * @return \AppserverIo\Stomp\StompFrame The stomp frame Response
+     * @return \AppserverIo\Stomp\Frame The stomp frame Response
      *
-     * @throws \AppserverIo\Stomp\Exception\StompProtocolException
+     * @throws \AppserverIo\Stomp\Exception\ProtocolException
      */
-    protected function handleConnect(StompFrame $stompFrame)
+    protected function handleConnect(Frame $stompFrame)
     {
         $protocolVersion = $stompFrame->getHeaderValueByKey(Headers::ACCEPT_VERSION);
 
@@ -233,7 +233,7 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
         );
 
         // returns the response frame
-        return new StompFrame(ServerCommands::CONNECTED, $headers);
+        return new Frame(ServerCommands::CONNECTED, $headers);
     }
 
     /**
@@ -271,17 +271,17 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
     /**
      * Handle the send request.
      *
-     * @param \AppserverIo\Stomp\StompFrame $stompFrame The Stomp frame to handle the connect.
+     * @param \AppserverIo\Stomp\Frame $stompFrame The Stomp frame to handle the connect.
      *
      * @return void
      *
-     * @throws \AppserverIo\Stomp\Exception\StompProtocolException
+     * @throws \AppserverIo\Stomp\Exception\ProtocolException
      */
-    protected function handleSend(StompFrame $stompFrame)
+    protected function handleSend(Frame $stompFrame)
     {
         // checks ist the client authenticated
         if ($this->getAuthenticator()->getIsAuthenticated() === false) {
-            throw new StompProtocolException(sprintf(ErrorMessages::FAILED_AUTH, ""));
+            throw new ProtocolException(sprintf(ErrorMessages::FAILED_AUTH, ""));
         }
 
         // set the destination from the header
@@ -300,9 +300,9 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
     /**
      * Handle the disconnect request.
      *
-     * @param \AppserverIo\Stomp\StompFrame $stompFrame The Stomp frame to handle the connect.
+     * @param \AppserverIo\Stomp\Frame $stompFrame The Stomp frame to handle the connect.
      *
-     * @return \AppserverIo\Stomp\StompFrame The stomp frame Response
+     * @return \AppserverIo\Stomp\Frame The stomp frame Response
      */
     protected function handleDisConnect($stompFrame)
     {
@@ -318,13 +318,13 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
         $this->mustConnectionClose = true;
 
         // returns the response frame
-        return new StompFrame(ServerCommands::RECEIPT, $headers);
+        return new Frame(ServerCommands::RECEIPT, $headers);
     }
 
     /**
      * Returns the response stomp frame.
      *
-     * @return \AppserverIo\Stomp\StompFrame
+     * @return \AppserverIo\Stomp\Frame
      */
     public function getResponseStompFrame()
     {
@@ -350,7 +350,7 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
      * @param string $message The message to set
      * @param array  $headers The headers to set
      *
-     * @return \AppserverIo\Stomp\StompFrame
+     * @return \AppserverIo\Stomp\Frame
      */
     protected function handleError($message, array $headers = array())
     {
@@ -363,6 +363,6 @@ class StompProtocolHandler implements StompProtocolHandlerInterface
         $this->mustConnectionClose = true;
 
         // returns the response frame
-        return new StompFrame(ServerCommands::ERROR, $headers, $message);
+        return new Frame(ServerCommands::ERROR, $headers, $message);
     }
 }

@@ -21,7 +21,7 @@
 
 namespace AppserverIo\Stomp;
 
-use AppserverIo\Stomp\Exception\StompProtocolException;
+use AppserverIo\Stomp\Exception\ProtocolException;
 use AppserverIo\Stomp\Protocol\ClientCommands;
 use AppserverIo\Stomp\Protocol\CommonValues;
 use AppserverIo\Stomp\Protocol\Headers;
@@ -44,7 +44,7 @@ class StompFrameTest extends HelperTestCase
     /**
      * The parserinstance to test.
      *
-     * @var \AppserverIo\Stomp\StompFrame
+     * @var \AppserverIo\Stomp\Frame
      */
     protected $frame;
 
@@ -55,11 +55,11 @@ class StompFrameTest extends HelperTestCase
      */
     public function setUp()
     {
-        $this->setFrame(new StompFrame());
+        $this->setFrame(new Frame());
     }
 
     /**
-     * @return StompFrame
+     * @return Frame
      */
     public function getFrame()
     {
@@ -67,7 +67,7 @@ class StompFrameTest extends HelperTestCase
     }
 
     /**
-     * @param StompFrame $frame
+     * @param Frame $frame
      */
     public function setFrame($frame)
     {
@@ -82,7 +82,7 @@ class StompFrameTest extends HelperTestCase
         // create some data for test
         $header = array(Headers::LOGIN => "foobar", Headers::PASSCODE => "password");
 
-        /// call the method we want test
+        // call the method we want test
         $this->getFrame()->setHeaders($header);
 
         // checks the results

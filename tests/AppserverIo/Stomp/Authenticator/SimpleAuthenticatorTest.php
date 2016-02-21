@@ -64,7 +64,7 @@ class SimpleAuthenticatorTest extends HelperTestCase
     }
 
     /**
-     * @expectedException \AppserverIo\Stomp\Exception\StompProtocolException
+     * @expectedException \AppserverIo\Stomp\Exception\ProtocolException
      *
      * @return void
      */
