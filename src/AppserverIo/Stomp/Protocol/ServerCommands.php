@@ -1,4 +1,5 @@
 <?php
+
 /**
  * \AppserverIo\Stomp\Utils\ServerCommands
  *
@@ -10,11 +11,8 @@
  *
  * PHP version 5
  *
- * @category   AppserverIo
- * @package    Appserver
- * @subpackage Stomp
  * @author     Lars Roettig <l.roettig@techdivision.com>
- * @copyright  2014 TechDivision GmbH <info@techdivision.com>
+ * @copyright  2016 TechDivision GmbH <info@techdivision.com>
  * @license    http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0;
  * @link       https://github.com/appserver-io/appserver
  */
@@ -24,18 +22,17 @@ namespace AppserverIo\Stomp\Protocol;
 /**
  * Holds the available stomp frame server commands.
  *
- * @category   AppserverIo
- * @package    Appserver
- * @subpackage Stomp
  * @author     Lars Roettig <l.roettig@techdivision.com>
- * @copyright  2014 TechDivision GmbH <info@techdivision.com>
+ * @copyright  2016 TechDivision GmbH <info@techdivision.com>
  * @license    http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0;
  * @link       https://github.com/appserver-io/appserver
- *
- * @todo       add const documentation
+ * @link       https://stomp.github.io/stomp-specification-1.2.html#Frames_and_Headers
  */
 class ServerCommands
 {
+    // Documentation for the Commands
+    // https://stomp.github.io/stomp-specification-1.2.html#Frames_and_Headers
+
     /**
      * @var string
      */

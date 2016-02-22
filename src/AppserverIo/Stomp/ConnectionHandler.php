@@ -1,55 +1,48 @@
 <?php
 
 /**
- * Stomp protocol authenticator interface
+ * \AppserverIo\Stomp\StompConnectionHandler
  *
- * @category   AppserverIo
- * @package    Appserver
- * @subpackage Stomp
- * @author     Lars Roettig <l.roettig@techdivision.com>
- * @copyright  2014 TechDivision GmbH <info@techdivision.com>
- * @license    http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link       https://github.com/appserver-io/appserver
- * @link       https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ *
+ * PHP version 5
+ *
+ * @author    Lars Roettig <l.roettig@techdivision.com>
+ * @copyright 2016 TechDivision GmbH - <info@appserver.io>
+ * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link      http://www.appserver.io/
  */
 
 namespace AppserverIo\Stomp;
 
-use AppserverIo\Server\Dictionaries\EnvVars;
-use AppserverIo\Server\Dictionaries\ModuleHooks;
-use AppserverIo\Server\Dictionaries\ServerVars;
 use AppserverIo\Server\Interfaces\ConnectionHandlerInterface;
 use AppserverIo\Server\Interfaces\ServerContextInterface;
-use AppserverIo\Server\Interfaces\RequestContextInterface;
 use AppserverIo\Server\Interfaces\WorkerInterface;
 use AppserverIo\Stomp\Exception\ProtocolException;
 use AppserverIo\Stomp\Utils\ErrorMessages;
-use AppserverIo\WebServer\Interfaces\HttpModuleInterface;
 use AppserverIo\Psr\Socket\SocketInterface;
+use AppserverIo\Stomp\Interfaces\ProtocolHandlerInterface;
+use AppserverIo\Server\Dictionaries\EnvVars;
+use AppserverIo\Server\Dictionaries\ModuleHooks;
+use AppserverIo\Server\Dictionaries\ServerVars;
+use AppserverIo\Server\Interfaces\RequestContextInterface;
 use AppserverIo\Psr\Socket\SocketReadException;
 use AppserverIo\Psr\Socket\SocketReadTimeoutException;
 use AppserverIo\Psr\Socket\SocketServerException;
-use AppserverIo\Psr\HttpMessage\Protocol;
-use AppserverIo\Http\HttpRequest;
-use AppserverIo\Http\HttpResponse;
-use AppserverIo\Http\HttpPart;
-use AppserverIo\Http\HttpQueryParser;
-use AppserverIo\Http\HttpRequestParser;
-use AppserverIo\Http\HttpResponseStates;
-use AppserverIo\Stomp\Interfaces\ProtocolHandlerInterface;
 use Psr\Log\LogLevel;
 
 /**
- * Class StompConnectionHandler
+ * The connection handler to handle stomp requests.
  *
- * @category   AppserverIo
- * @package    Appserver
- * @subpackage Stomp
- * @author     Lars Roettig <l.roettig@techdivision.com>
- * @copyright  2014 TechDivision GmbH <info@appserver.io>
- * @license    http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link       https://github.com/appserver-io/appserver
- * @link       https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
+ * @author    Lars Roettig <l.roettig@techdivision.com>
+ * @copyright 2016 TechDivision GmbH - <info@appserver.io>
+ * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link      http://www.appserver.io/
+ * @link      https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
 class ConnectionHandler implements ConnectionHandlerInterface
 {
@@ -125,20 +118,29 @@ class ConnectionHandler implements ConnectionHandlerInterface
     protected $logger;
 
     /**
+     * Holds the maximum command length in bytes.
+     *
      * @var int
      */
     protected $maxCommandLength = 20;
 
     /**
+     * Holds the maximum count of header lines.
+     *
      * @var int
      */
     protected $maxHeaders = 1000;
-    /**
+
+    /**.
+     * Holds the max string length of the header in bytes.
+     *
      * @var int
      */
     protected $maxHeaderLength = 102410;
 
     /**
+     * Holds the max string length of the data in bytes.
+     *
      * @var int
      */
     protected $maxDataLength = 10241024100;
@@ -175,6 +177,8 @@ class ConnectionHandler implements ConnectionHandlerInterface
 
         // get the logger for the connection handler
         $this->logger = $serverContext->getLogger();
+
+        // set the configuration for the connection handler.
         $this->setConfigValues($params);
 
         // injects new stomp handler
@@ -193,7 +197,6 @@ class ConnectionHandler implements ConnectionHandlerInterface
 
         // init new stomp frame parser
         $this->stompParser = new Parser();
-
     }
 
     /**
@@ -223,13 +226,15 @@ class ConnectionHandler implements ConnectionHandlerInterface
      *
      * @param string $name The modules name to return an instance for
      *
-     * @return \AppserverIo\WebServer\Interfaces\HttpModuleInterface|null
+     * @return \AppserverIo\WebServer\Interfaces\HttpModuleInterface | null
      */
     public function getModule($name)
     {
         if (isset($this->modules[$name])) {
             return $this->modules[$name];
         }
+
+        return null;
     }
 
     /**
@@ -306,6 +311,7 @@ class ConnectionHandler implements ConnectionHandlerInterface
                     continue;
                 }
 
+                // init´s instances for the stompConnection handler
                 $this->initInstances();
 
                 // remove the newline from the command
@@ -376,7 +382,7 @@ class ConnectionHandler implements ConnectionHandlerInterface
     protected function log($message, $params, $level = LogLevel::INFO)
     {
 
-        // logging is´t use if developer deactivate.
+        // logging is not use if is developer mode deactivate.
         if ($this->developerMode === false) {
             return;
         }
@@ -515,7 +521,6 @@ class ConnectionHandler implements ConnectionHandlerInterface
             $this->developerMode = $params['developerMode'];
         }
     }
-
 
     /**
      * Read the headers from the connection

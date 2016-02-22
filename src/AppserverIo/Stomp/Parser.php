@@ -1,6 +1,7 @@
 <?php
+
 /**
- * \AppserverIo\Stomp
+ * \AppserverIo\Stomp\Parser
  *
  * NOTICE OF LICENSE
  *
@@ -10,13 +11,10 @@
  *
  * PHP version 5
  *
- * @category   AppserverIo
- * @package    Appserver
- * @subpackage Stomp
- * @author     Lars Roettig <l.roettig@techdivision.com>
- * @copyright  2014 TechDivision GmbH <info@appserver.io>
- * @license    http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link       https://github.com/appserver-io/appserver
+ * @author    Lars Roettig <l.roettig@techdivision.com>
+ * @copyright 2016 TechDivision GmbH - <info@appserver.io>
+ * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link      http://www.appserver.io/
  */
 
 namespace AppserverIo\Stomp;
@@ -30,14 +28,11 @@ use AppserverIo\Stomp\Utils\ErrorMessages;
 /**
  * Implementation for a StompParser.
  *
- * @category   AppserverIo
- * @package    Appserver
- * @subpackage Stomp
- * @author     Lars Roettig <l.roettig@techdivision.com>
- * @copyright  2014 TechDivision GmbH <info@techdivision.com>
- * @license    http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link       https://github.com/appserver-io/appserver
- * @link       https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
+ * @author    Lars Roettig <l.roettig@techdivision.com>
+ * @copyright 2016 TechDivision GmbH - <info@appserver.io>
+ * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link      http://www.appserver.io/
+ * @link      https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
 class Parser implements RequestParserInterface
 {
@@ -104,7 +99,7 @@ class Parser implements RequestParserInterface
     /**
      * Parse the stomp frame headers.
      *
-     * @param string $frameHeaders The frame headers
+     * @param string $frameHeaders The frame headers.
      *
      * @return void
      * @throws \AppserverIo\Stomp\Exception\ProtocolException
@@ -121,7 +116,7 @@ class Parser implements RequestParserInterface
     }
 
     /**
-     * Parse's the given header line
+     * Parse's the given header line.
      *
      * @param string $line The line defining a stomp request header
      *
