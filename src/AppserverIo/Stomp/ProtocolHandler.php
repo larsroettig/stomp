@@ -1,6 +1,7 @@
 <?php
+
 /**
- * \AppserverIo\Stomp\StompProtocolHandler
+ * \AppserverIo\Stomp\ProtocolHandler
  *
  * NOTICE OF LICENSE
  *
@@ -10,14 +11,12 @@
  *
  * PHP version 5
  *
- * @category   AppserverIo
- * @package    Appserver
- * @subpackage Stomp
- * @author     Lars Roettig <l.roettig@techdivision.com>
- * @copyright  2014 TechDivision GmbH <info@techdivision.com>
- * @license    http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link       https://github.com/appserver-io/appserver
+ * @author    Lars Roettig <l.roettig@techdivision.com>
+ * @copyright 2016 TechDivision GmbH - <info@appserver.io>
+ * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link      http://www.appserver.io/
  */
+
 
 namespace AppserverIo\Stomp;
 
@@ -37,17 +36,21 @@ use AppserverIo\Stomp\Utils\ErrorMessages;
 /**
  * Implementation to handle stomp request.
  *
- * @category   AppserverIo
- * @package    Appserver
- * @subpackage Stomp
- * @author     Lars Roettig <l.roettig@techdivision.com>
- * @copyright  2014 TechDivision GmbH <info@techdivision.com>
- * @license    http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link       https://github.com/appserver-io/appserver
- * @link       https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
+ * @author    Lars Roettig <l.roettig@techdivision.com>
+ * @copyright 2016 TechDivision GmbH - <info@appserver.io>
+ * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link      http://www.appserver.io/
+ * @link      https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
 class ProtocolHandler implements ProtocolHandlerInterface
 {
+
+    /**
+     * Holds the Separator for protocol versions.
+     *
+     * @var string
+     */
+    const SEPARATOR = ",";
 
     /**
      * The supported protocol versions.
@@ -160,12 +163,12 @@ class ProtocolHandler implements ProtocolHandlerInterface
                 $this->response = $this->handleConnect($stompFrame);
                 break;
 
-            case ClientCommands::SEND:// case for client send message
+            case ClientCommands::SEND: // case for client send message
                 $this->handleSend($stompFrame);
                 $this->response = null;
                 break;
 
-            case ClientCommands::DISCONNECT:// case for client disconnect
+            case ClientCommands::DISCONNECT: // case for client disconnect
                 $this->response = $this->handleDisConnect($stompFrame);
                 break;
         }
@@ -183,12 +186,12 @@ class ProtocolHandler implements ProtocolHandlerInterface
     public function detectProtocolVersion($protocolVersion)
     {
         // is not required to detect the version
-        if (strpos($protocolVersion, ',') === false) {
+        if (strpos($protocolVersion, ProtocolHandler::SEPARATOR) === false) {
             return $protocolVersion;
         }
 
         $supportedProtocolVersions = array_keys($this->supportedProtocolVersions);
-        $acceptsVersions = explode(",", $protocolVersion);
+        $acceptsVersions = explode(ProtocolHandler::SEPARATOR, $protocolVersion);
         $acceptsVersions = array_intersect($acceptsVersions, $supportedProtocolVersions);
 
         if (count($acceptsVersions) == 0) {
