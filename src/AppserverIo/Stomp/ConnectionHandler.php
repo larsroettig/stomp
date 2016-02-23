@@ -26,13 +26,7 @@ use AppserverIo\Stomp\Exception\ProtocolException;
 use AppserverIo\Stomp\Utils\ErrorMessages;
 use AppserverIo\Psr\Socket\SocketInterface;
 use AppserverIo\Stomp\Interfaces\ProtocolHandlerInterface;
-use AppserverIo\Server\Dictionaries\EnvVars;
-use AppserverIo\Server\Dictionaries\ModuleHooks;
-use AppserverIo\Server\Dictionaries\ServerVars;
 use AppserverIo\Server\Interfaces\RequestContextInterface;
-use AppserverIo\Psr\Socket\SocketReadException;
-use AppserverIo\Psr\Socket\SocketReadTimeoutException;
-use AppserverIo\Psr\Socket\SocketServerException;
 use Psr\Log\LogLevel;
 
 /**
@@ -280,7 +274,7 @@ class ConnectionHandler implements ConnectionHandlerInterface
      * @param \AppserverIo\Psr\Socket\SocketInterface        $connection The connection to handle
      * @param \AppserverIo\Server\Interfaces\WorkerInterface $worker     The worker how started this handle
      *
-     * @return bool Weather it was responsible to handle the firstLine or not.
+     * @return boolean|null Weather it was responsible to handle the firstLine or not.
      */
     public function handle(SocketInterface $connection, WorkerInterface $worker)
     {
@@ -374,7 +368,7 @@ class ConnectionHandler implements ConnectionHandlerInterface
      * Logs with an arbitrary level.
      *
      * @param string $message The message to log
-     * @param mixed  $params  The params to export
+     * @param Interfaces\FrameInterface  $params  The params to export
      * @param string $level   The level to log
      *
      * @return void
