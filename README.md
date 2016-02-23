@@ -1,6 +1,6 @@
 Appserver.io Message Queue StompProtocol Adapter
 ==============================================================================
-[![Build Status](https://scrutinizer-ci.com/g/larsroettig/stomp/badges/build.png?b=master)](https://scrutinizer-ci.com/g/larsroettig/stomp/build-status/master)
+[![Build Status](https://travis-ci.org/larsroettig/stomp.svg?branch=master)](https://travis-ci.org/larsroettig/stomp
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/larsroettig/stomp/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/larsroettig/stomp/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/larsroettig/stomp/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/larsroettig/stomp/?branch=master)
 

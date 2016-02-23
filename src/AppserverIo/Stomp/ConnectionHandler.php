@@ -367,9 +367,9 @@ class ConnectionHandler implements ConnectionHandlerInterface
     /**
      * Logs with an arbitrary level.
      *
-     * @param string $message The message to log
-     * @param Interfaces\FrameInterface  $params  The params to export
-     * @param string $level   The level to log
+     * @param string                    $message The message to log
+     * @param Interfaces\FrameInterface $params  The params to export
+     * @param string                    $level   The level to log
      *
      * @return void
      */
