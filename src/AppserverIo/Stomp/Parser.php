@@ -178,7 +178,7 @@ class Parser implements RequestParserInterface
      * Validates the given header value by given key.
      *
      * @param string     $key   The key to find the validation type.
-     * @param string|int $value The value to validated by type.
+     * @param string $value The value to validated by type.
      *
      * @return bool
      */
