@@ -77,7 +77,11 @@ class Parser implements RequestParserInterface
      */
     public function getHeaderSize()
     {
-        return count($this->headers);
+        if (!isset($this->headers)) {
+            return 0;
+        } else {
+            return count($this->headers);
+        }
     }
 
     /**
@@ -177,7 +181,7 @@ class Parser implements RequestParserInterface
     /**
      * Validates the given header value by given key.
      *
-     * @param string     $key   The key to find the validation type.
+     * @param string $key   The key to find the validation type.
      * @param string $value The value to validated by type.
      *
      * @return bool

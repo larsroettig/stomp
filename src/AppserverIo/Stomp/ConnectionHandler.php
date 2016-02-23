@@ -19,14 +19,13 @@
 
 namespace AppserverIo\Stomp;
 
+use AppserverIo\Psr\Socket\SocketInterface;
 use AppserverIo\Server\Interfaces\ConnectionHandlerInterface;
 use AppserverIo\Server\Interfaces\ServerContextInterface;
 use AppserverIo\Server\Interfaces\WorkerInterface;
 use AppserverIo\Stomp\Exception\ProtocolException;
-use AppserverIo\Stomp\Utils\ErrorMessages;
-use AppserverIo\Psr\Socket\SocketInterface;
 use AppserverIo\Stomp\Interfaces\ProtocolHandlerInterface;
-use AppserverIo\Server\Interfaces\RequestContextInterface;
+use AppserverIo\Stomp\Utils\ErrorMessages;
 use Psr\Log\LogLevel;
 
 /**
@@ -151,7 +150,42 @@ class ConnectionHandler implements ConnectionHandlerInterface
      *
      * @var bool
      */
-    protected $developerMode =  false;
+    protected $developerMode = false;
+
+    /**
+     * Holds the configuration key for maxCommandLength.
+     *
+     * @var string
+     */
+    const KEY_MAX_COMMAND_LENGTH = 'maxCommandLength';
+
+    /**
+     * Holds the configuration key for maxHeaders.
+     *
+     * @var string
+     */
+    const KEY_MAX_HEADERS = 'maxHeaders';
+
+    /**
+     * Holds the configuration key for maxHeaderLength.
+     *
+     * @var string
+     */
+    const KEY_MAX_HEADER_LENGTH = 'maxHeaderLength';
+
+    /**
+     * Holds the configuration key for maxDataLength.
+     *
+     * @var string
+     */
+    const KEY_MAX_DATA_LENGTH = 'maxDataLength';
+
+    /**
+     * Holds the configuration key for developerMode.
+     *
+     * @var string
+     */
+    const KEY_DEVELOPER_MODE = 'developerMode';
 
     /**
      * Inits the connection handler by given context and params
@@ -367,9 +401,9 @@ class ConnectionHandler implements ConnectionHandlerInterface
     /**
      * Logs with an arbitrary level.
      *
-     * @param string $message The message to log
-     * @param Interfaces\FrameInterface  $params  The params to export
-     * @param string $level   The level to log
+     * @param string                    $message The message to log
+     * @param Interfaces\FrameInterface $params  The params to export
+     * @param string                    $level   The level to log
      *
      * @return void
      */
@@ -490,29 +524,29 @@ class ConnectionHandler implements ConnectionHandlerInterface
      */
     public function setConfigValues($params = array())
     {
-        if (!isset($params)) {
+        if (!isset($params) || !is_array($params)) {
             return;
         }
 
         //set config values
-        if (isset($params['maxCommandLength']) && is_numeric($params['maxCommandLength'])) {
-            $this->maxCommandLength = $params['maxCommandLength'];
+        if (isset($params[self::KEY_MAX_COMMAND_LENGTH]) && is_numeric($params[self::KEY_MAX_COMMAND_LENGTH])) {
+            $this->maxCommandLength = intval($params[self::KEY_MAX_COMMAND_LENGTH]);
         }
 
-        if (isset($params['maxHeaders']) && is_numeric($params['maxHeaders'])) {
-            $this->maxHeaders = $params['maxHeaders'];
+        if (isset($params[self::KEY_MAX_HEADERS]) && is_numeric($params[self::KEY_MAX_HEADERS])) {
+            $this->maxHeaders = intval($params[self::KEY_MAX_HEADERS]);
         }
 
-        if (isset($params['maxHeaderLength']) && is_numeric($params['maxHeaderLength'])) {
-            $this->maxHeaders = $params['maxHeaderLength'];
+        if (isset($params[self::KEY_MAX_HEADER_LENGTH]) && is_numeric($params[self::KEY_MAX_HEADER_LENGTH])) {
+            $this->maxHeaders = intval($params[self::KEY_MAX_HEADER_LENGTH]);
         }
 
-        if (isset($params['maxDataLength']) && is_numeric($params['maxDataLength'])) {
-            $this->maxHeaders = $params['maxDataLength'];
+        if (isset($params[self::KEY_MAX_DATA_LENGTH]) && is_numeric($params[self::KEY_MAX_DATA_LENGTH])) {
+            $this->maxHeaders = intval($params[self::KEY_MAX_DATA_LENGTH]);
         }
 
-        if (isset($params['developerMode']) && is_bool($params['developerMode'])) {
-            $this->developerMode = $params['developerMode'];
+        if (isset($params[self::KEY_DEVELOPER_MODE]) && is_bool($params[self::KEY_DEVELOPER_MODE])) {
+            $this->developerMode = $params[self::KEY_DEVELOPER_MODE];
         }
     }
 

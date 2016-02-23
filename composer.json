@@ -1,7 +1,7 @@
 {
   "name": "appserver-io/stomp-mq-adapter",
   "description": "Stomp message queue adapter",
-  "homepage": "https://github.com/techdivision/TechDivision_StompProtocol",
+  "homepage": "http://larsroettig.de",
   "keywords": [
     "php",
     "stomp",
@@ -14,7 +14,7 @@
     {
       "name": "Lars Roettig",
       "email": "l.roettig@techdivision.com",
-      "homepage": "http://www.appserver.io",
+      "homepage": "http://larsroettig.de",
       "role": "Developer"
     }
   ],
