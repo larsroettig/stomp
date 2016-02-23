@@ -1,5 +1,8 @@
 Appserver.io Message Queue StompProtocol Adapter
 ==============================================================================
+[![Build Status](https://scrutinizer-ci.com/g/larsroettig/stomp/badges/build.png?b=master)](https://scrutinizer-ci.com/g/larsroettig/stomp/build-status/master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/larsroettig/stomp/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/larsroettig/stomp/?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/larsroettig/stomp/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/larsroettig/stomp/?branch=master)
 
 Can receive stomp messages and will send it to "Appserver.io message Queue".
 
