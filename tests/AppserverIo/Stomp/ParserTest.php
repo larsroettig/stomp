@@ -1,4 +1,5 @@
 <?php
+
 /**
  * \AppserverIo\Stomp\StompParserTest
  *
@@ -10,18 +11,16 @@
  *
  * PHP version 5
  *
- * @category  Library
- * @package   TechDivision_StompProtocol
  * @author    Lars Roettig <l.roettig@techdivision.com>
  * @copyright 2014 TechDivision GmbH <info@techdivision.com>
  * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link       https://github.com/appserver-io/appserver
+ * @link      https://github.com/appserver-io/appserver
  * @link      https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
 
 namespace AppserverIo\Stomp;
 
-use AppserverIo\Stomp\Exception\StompProtocolException;
+use AppserverIo\Stomp\Exception\ProtocolException;
 use AppserverIo\Stomp\Protocol\ClientCommands;
 use AppserverIo\Stomp\Protocol\CommonValues;
 use AppserverIo\Stomp\Protocol\Headers;
@@ -29,12 +28,10 @@ use AppserverIo\Stomp\Protocol\Headers;
 /**
  * Implementation for a Stomp Parser.
  *
- * @category  Library
- * @package   TechDivision_StompProtocol
  * @author    Lars Roettig <l.roettig@techdivision.com>
  * @copyright 2014 TechDivision GmbH <info@techdivision.com>
  * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link       https://github.com/appserver-io/appserver
+ * @link      https://github.com/appserver-io/appserver
  * @link      https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
 class StompParserTest extends HelperTestCase
@@ -43,7 +40,7 @@ class StompParserTest extends HelperTestCase
     /**
      * The parserinstance to test.
      *
-     * @var \AppserverIo\Stomp\StompParser
+     * @var \AppserverIo\Stomp\Parser
      */
     protected $parser;
 
@@ -54,7 +51,7 @@ class StompParserTest extends HelperTestCase
      */
     public function setUp()
     {
-        $this->parser = new StompParser();
+        $this->parser = new Parser();
     }
 
     /**
@@ -88,7 +85,7 @@ class StompParserTest extends HelperTestCase
 
 
     /**
-     * @expectedException \AppserverIo\Stomp\Exception\StompProtocolException
+     * @expectedException \AppserverIo\Stomp\Exception\ProtocolException
      *
      * @return void
      */
@@ -99,7 +96,7 @@ class StompParserTest extends HelperTestCase
     }
 
     /**
-     * @expectedException \AppserverIo\Stomp\Exception\StompProtocolException
+     * @expectedException \AppserverIo\Stomp\Exception\ProtocolException
      *
      * @return void
      */
@@ -110,7 +107,7 @@ class StompParserTest extends HelperTestCase
     }
 
     /**
-     * @expectedException \AppserverIo\Stomp\Exception\StompProtocolException
+     * @expectedException \AppserverIo\Stomp\Exception\ProtocolException
      *
      * @return void
      */
@@ -121,7 +118,7 @@ class StompParserTest extends HelperTestCase
     }
 
     /**
-     * @expectedException \AppserverIo\Stomp\Exception\StompProtocolException
+     * @expectedException \AppserverIo\Stomp\Exception\ProtocolException
      *
      * @return void
      */

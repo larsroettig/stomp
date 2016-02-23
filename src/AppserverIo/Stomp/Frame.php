@@ -1,6 +1,7 @@
 <?php
+
 /**
- * \AppserverIo\Stomp
+ * \AppserverIo\Stomp\Frame
  *
  * NOTICE OF LICENSE
  *
@@ -10,13 +11,10 @@
  *
  * PHP version 5
  *
- * @category   AppserverIo
- * @package    Appserver
- * @subpackage Stomp
- * @author     Lars Roettig <l.roettig@techdivision.com>
- * @copyright  2014 TechDivision GmbH <info@appserver.io>
- * @license    http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link       https://github.com/appserver-io/appserver
+ * @author    Lars Roettig <l.roettig@techdivision.com>
+ * @copyright 2016 TechDivision GmbH - <info@appserver.io>
+ * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link      http://www.appserver.io/
  */
 
 namespace AppserverIo\Stomp;
@@ -27,37 +25,41 @@ use AppserverIo\Stomp\Protocol\ServerCommands;
 use AppserverIo\Stomp\Interfaces\FrameInterface;
 
 /**
- * Stomp frame implementation
+ * This class for stomp frame implementations.
  *
- * @category   AppserverIo
- * @package    Appserver
- * @subpackage Stomp
- * @author     Lars Roettig <l.roettig@techdivision.com>
- * @copyright  2014 TechDivision GmbH <info@appserver.io>
- * @license    http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link       https://github.com/appserver-io/appserver
- * @link       https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
+ * @author    Lars Roettig <l.roettig@techdivision.com>
+ * @copyright 2016 TechDivision GmbH - <info@appserver.io>
+ * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link      http://www.appserver.io/
+ * @link      https://github.com/stomp/stomp-spec/blob/master/src/stomp-specification-1.1.md
  */
-class StompFrame implements FrameInterface
+class Frame implements FrameInterface
 {
     /**
+     * Holds the const for stomp frame colon.
      *
      * @var string
      */
     const COLON = ':';
 
     /**
+     * Holds the const for stomp frame escape.
      *
+     * @var string
      */
     const ESCAPE = '\\';
 
     /**
+     * Holds the const for stomp frame newline.
      *
+     * @var string
      */
     const NEWLINE = "\n";
 
     /**
+     * Holds the const for stomp frame null.
      *
+     * @var string
      */
     const NULL = "\x00";
 
@@ -193,12 +195,12 @@ class StompFrame implements FrameInterface
     public function __toString()
     {
         return $this->command .
-        StompFrame::NEWLINE .
+        Frame::NEWLINE .
         $this->headersToString() .
-        StompFrame::NEWLINE .
+        Frame::NEWLINE .
         $this->body .
-        StompFrame::NULL .
-        StompFrame::NEWLINE;
+        Frame::NULL .
+        Frame::NEWLINE;
     }
 
     /**
@@ -214,7 +216,7 @@ class StompFrame implements FrameInterface
             $name = $this->encodeHeaderString($key);
             $value = $this->encodeHeaderString($value);
 
-            $headerString .= $name . StompFrame::COLON . $value . StompFrame::NEWLINE;
+            $headerString .= $name . Frame::COLON . $value . Frame::NEWLINE;
         }
 
         return $headerString;
@@ -233,9 +235,9 @@ class StompFrame implements FrameInterface
         if ($this->getHeaderEncodingRequired()) {
             // escape "\n , : , \\" in value
             $value = strtr($value, array(
-                StompFrame::NEWLINE => '\n',
-                StompFrame::COLON => '\c',
-                StompFrame::ESCAPE => '\\\\'
+                Frame::NEWLINE => '\n',
+                Frame::COLON   => '\c',
+                Frame::ESCAPE  => '\\\\'
             ));
         }
 

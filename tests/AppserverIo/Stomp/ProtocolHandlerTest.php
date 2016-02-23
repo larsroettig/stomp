@@ -1,4 +1,5 @@
 <?php
+
 /**
  * \AppserverIo\Stomp\StompProtocolHandlerTest
  *
@@ -10,8 +11,6 @@
  *
  * PHP version 5
  *
- * @category   Library
- * @package    TechDivision_StompProtocol
  * @author     Lars Roettig <l.roettig@techdivision.com>
  * @copyright  2014 TechDivision GmbH <info@techdivision.com>
  * @license    http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
@@ -23,7 +22,7 @@ namespace AppserverIo\Stomp;
 
 use AppserverIo\Messaging\QueueSender;
 use PDepend\TextUI\Command;
-use AppserverIo\Stomp\Exception\StompProtocolException;
+use AppserverIo\Stomp\Exception\ProtocolException;
 use AppserverIo\Stomp\Protocol\ClientCommands;
 use AppserverIo\Stomp\Protocol\CommonValues;
 use AppserverIo\Stomp\Protocol\Headers;
@@ -33,8 +32,6 @@ use AppserverIo\Stomp\Protocol\ServerCommands;
 /**
  * Implementation to test handle stomp handler.
  *
- * @category   Library
- * @package    TechDivision_StompProtocol
  * @author     Lars Roettig <l.roettig@techdivision.com>
  * @copyright  2014 TechDivision GmbH <info@techdivision.com>
  * @license    http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
@@ -45,7 +42,7 @@ class StompProtocolHandlerTest extends HelperTestCase
 {
 
     /**
-     * @var \AppserverIo\Stomp\StompProtocolHandler
+     * @var \AppserverIo\Stomp\ProtocolHandler
      */
     protected $handler;
 
@@ -57,10 +54,10 @@ class StompProtocolHandlerTest extends HelperTestCase
     public function setUp()
     {
         // init new stomp protocol handler
-        $this->handler = new StompProtocolHandler();
+        $this->handler = new ProtocolHandler();
 
         // init new authenticator mock object
-        /** @var \AppserverIo\Stomp\Interfaces\Authenticator $authenticator */
+        /** @var \AppserverIo\Stomp\Interfaces\AuthenticatorInterface $authenticator */
         $authenticator = $this->getMockBuilder('AppserverIo\Stomp\Interfaces\AuthenticatorInterface')->getMock();
 
         $authenticator->expects($this->any())
@@ -73,7 +70,7 @@ class StompProtocolHandlerTest extends HelperTestCase
                 if ($name == "Fo" && $password == "bar") {
                     return md5(rand());
                 } else {
-                    throw new StompProtocolException("");
+                    throw new ProtocolException("");
                 }
             }));
 
@@ -93,7 +90,7 @@ class StompProtocolHandlerTest extends HelperTestCase
     public function testConnectSuccessfully()
     {
         // create some test data
-        $stompFrame = new StompFrame(ClientCommands::CONNECT, array(
+        $stompFrame = new Frame(ClientCommands::CONNECT, array(
             Headers::ACCEPT_VERSION => "1.0",
             Headers::LOGIN => "Fo",
             Headers::PASSCODE => "bar"
@@ -104,7 +101,7 @@ class StompProtocolHandlerTest extends HelperTestCase
     }
 
     /**
-     * @expectedException \AppserverIo\Stomp\Exception\StompProtocolException
+     * @expectedException \AppserverIo\Stomp\Exception\ProtocolException
      *
      *
      * @return void
@@ -112,7 +109,7 @@ class StompProtocolHandlerTest extends HelperTestCase
     public function testConnectWithProtocolVersionException()
     {
         // create some test data
-        $stompFrame = new StompFrame(ClientCommands::CONNECT, array(
+        $stompFrame = new Frame(ClientCommands::CONNECT, array(
             Headers::ACCEPT_VERSION => "2.0",
         ));
 
@@ -122,14 +119,14 @@ class StompProtocolHandlerTest extends HelperTestCase
 
 
     /**
-     * @expectedException \AppserverIo\Stomp\Exception\StompProtocolException
+     * @expectedException \AppserverIo\Stomp\Exception\ProtocolException
      *
      * @return void
      */
     public function testConnectWithAuthenticatorException()
     {
         // create some test data
-        $stompFrame = new StompFrame(ClientCommands::CONNECT, array(
+        $stompFrame = new Frame(ClientCommands::CONNECT, array(
             Headers::ACCEPT_VERSION => "1.0",
             Headers::LOGIN => "Fo",
         ));
@@ -144,14 +141,14 @@ class StompProtocolHandlerTest extends HelperTestCase
     public function testDisConnect()
     {
         // create some test data
-        $disConnect = new StompFrame(ClientCommands::DISCONNECT);
+        $disConnect = new Frame(ClientCommands::DISCONNECT);
 
         // call the function we want test
         $this->handler->handle($disConnect);
 
         $response = $this->handler->getResponseStompFrame();
         $this->assertTrue($this->handler->getMustConnectionClose());
-        $this->assertEquals($response, new StompFrame(ServerCommands::RECEIPT));
+        $this->assertEquals($response, new Frame(ServerCommands::RECEIPT));
     }
 
     /**
@@ -160,14 +157,14 @@ class StompProtocolHandlerTest extends HelperTestCase
     public function testDisConnectWithReceipt()
     {
         // create some test data
-        $disConnect = new StompFrame(ClientCommands::DISCONNECT, array('receipt' => '1'));
+        $disConnect = new Frame(ClientCommands::DISCONNECT, array('receipt' => '1'));
 
         // call the function we want test
         $this->handler->handle($disConnect);
 
         $response = $this->handler->getResponseStompFrame();
         $this->assertTrue($this->handler->getMustConnectionClose());
-        $this->assertEquals($response, new StompFrame(ServerCommands::RECEIPT, array('receipt-id' =>1)));
+        $this->assertEquals($response, new Frame(ServerCommands::RECEIPT, array('receipt-id' =>1)));
     }
 
     /**
@@ -182,16 +179,16 @@ class StompProtocolHandlerTest extends HelperTestCase
 
         $response = $this->handler->getResponseStompFrame();
         $this->assertTrue($this->handler->getMustConnectionClose());
-        $this->assertEquals($response, new StompFrame(ServerCommands::ERROR, array(), $message));
+        $this->assertEquals($response, new Frame(ServerCommands::ERROR, array(), $message));
     }
 
     /**
-     * @expectedException \AppserverIo\Stomp\Exception\StompProtocolException
+     * @expectedException \AppserverIo\Stomp\Exception\ProtocolException
      */
     public function testHandleSendNotAuthenticated()
     {
         // create some test data
-        $stompFrame = new StompFrame(ClientCommands::SEND, array(
+        $stompFrame = new Frame(ClientCommands::SEND, array(
             Headers::ACCEPT_VERSION => "1.0",
         ));
 
@@ -214,7 +211,7 @@ class StompProtocolHandlerTest extends HelperTestCase
     public function testHandleSendAuthenticated()
     {
         // create some test data
-        $stompFrame = new StompFrame(ClientCommands::SEND, array(
+        $stompFrame = new Frame(ClientCommands::SEND, array(
             Headers::ACCEPT_VERSION => "1.0",
         ));
 
@@ -275,7 +272,7 @@ class StompProtocolHandlerTest extends HelperTestCase
     /**
      * @return void
      *
-     * @expectedException \AppserverIo\Stomp\Exception\StompProtocolException
+     * @expectedException \AppserverIo\Stomp\Exception\ProtocolException
      */
     public function testDetectProtocolVersionWithNotExistingVersions()
     {
