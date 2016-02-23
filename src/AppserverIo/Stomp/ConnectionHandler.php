@@ -206,8 +206,10 @@ class ConnectionHandler implements ConnectionHandlerInterface
         // get the logger for the connection handler
         $this->logger = $serverContext->getLogger();
 
-        // set the configuration for the connection handler.
-        $this->setConfigValues($params);
+        if (isset($params) && is_array($params)) {
+            // set the configuration for the connection handler.
+            $this->setConfigValues($params);
+        }
 
         // injects new stomp handler
         $this->injectProtocolHandler(new ProtocolHandler());

@@ -34,7 +34,7 @@ interface RequestParserInterface
     /**
      * Returns the parsed stomp header list size.
      *
-     * @return array
+     * @return int
      */
     public function getHeaderSize();
 

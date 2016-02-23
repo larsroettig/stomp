@@ -31,6 +31,49 @@ namespace AppserverIo\Stomp\Interfaces;
 
 interface FrameInterface
 {
+
+    /**
+     * Create new stomp protocol frame.
+     *
+     * @param string $command The message command.
+     * @param array  $headers The message headers.
+     * @param string $body    The message body.
+     */
+    public function __construct($command = null, array $headers = array(), $body = "");
+
+    /**
+     * Returns the message body.
+     *
+     * @return string
+     */
+    public function getBody();
+
+    /**
+     * Set the value for the given header key.
+     *
+     * @param string $key   The header to find the value
+     * @param string $value The value to set
+     *
+     * @return void
+     */
+    public function setHeaderValueByKey($key, $value);
+
+    /**
+     * Returns the value for the given header key.
+     *
+     * @param string $key The header to find the value
+     *
+     * @return string|null
+     */
+    public function getHeaderValueByKey($key);
+
+    /**
+     * Returns the message headers.
+     *
+     * @return array
+     */
+    public function getHeaders();
+
     /**
      * Set the headers.
      *
