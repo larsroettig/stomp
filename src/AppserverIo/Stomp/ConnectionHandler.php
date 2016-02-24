@@ -11,7 +11,7 @@
  *
  * PHP version 5
  *
- * @author    Lars Roettig <l.roettig@techdivision.com>
+ * @author    Lars Roettig <lr@appserver.io>
  * @copyright 2016 TechDivision GmbH - <info@appserver.io>
  * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      http://www.appserver.io/
@@ -31,7 +31,7 @@ use Psr\Log\LogLevel;
 /**
  * The connection handler to handle stomp requests.
  *
- * @author    Lars Roettig <l.roettig@techdivision.com>
+ * @author    Lars Roettig <lr@appserver.io>
  * @copyright 2016 TechDivision GmbH - <info@appserver.io>
  * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      http://www.appserver.io/
@@ -64,7 +64,7 @@ class ConnectionHandler implements ConnectionHandlerInterface
     /**
      * Hold's the connection instance
      *
-     * @var \AppserverIo\Server\Sockets\SocketInterface
+     * @var \AppserverIo\Psr\Socket\SocketInterface
      */
     protected $connection;
 
